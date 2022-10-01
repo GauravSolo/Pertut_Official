@@ -1,0 +1,243 @@
+/* .front{
+    height: 60vh;
+    width: 100%;
+    position: relative;
+    background-image: url('../images/apple.jpg');
+    background-size:     cover;                      
+    background-repeat:   no-repeat;
+    background-position: center center; 
+    z-index: -999999;
+} */
+.front{
+  min-height: 50vh;
+  width: 100%;
+  position: relative;
+  background-image: url('../images/bg1.jpeg');
+  background-size:     cover;                      /* <------ */
+  background-repeat:   no-repeat;
+  background-position: center center; 
+  /* z-index: -999999; */
+}
+
+/* .container{
+    height: 500vh;
+} */
+
+.navbar-nav > li{
+    margin-left:15px;
+    margin-right:15px;
+    position: relative;
+  }
+  .badge{
+    /* background-color: rgba(255,255,255,0); */
+    border-color: #ffa737;
+    color: #ffa737;
+    font-family : "Arial", Helvetica, sans-serif;
+    font-size: 11.2px;
+    padding: 0.35em 0.35em;
+    /* line-height: 10.2px; */
+    margin-left: 0.75em;
+    border: 0.1em solid #ffa737;
+    border-radius: 4px;
+    padding-top: 6px;
+  }
+/* .frontrow{
+    height: 80.8vh ;
+} */
+.mainrow{
+  /* min-height: 90vh; */
+  position: relative;
+}
+
+@media only screen and (min-width: 600px) {
+      
+  .heading1{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      transform: translate(-50%,-50%);
+      margin: 0 !important;
+      
+  }
+  
+  
+}
+
+.heading1{
+  font-size: 4rem;
+}
+
+@media only screen and (max-width: 600px) {
+    
+    /* .frontrow{
+        height:50vh;
+    } */
+    /* .mainrow{
+       min-height: 50vh;
+    } */
+      .heading1{
+        font-size: 3rem;
+    }
+    
+    .front{
+      min-height: 35vh;
+    }
+
+}
+  .frontrow{
+      height: 50%;
+  }
+ 
+
+  :root {
+    --surface-color: #fff;
+    --curve: 40;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background-color: #fef8f8;
+  }
+  
+
+
+
+  .nav-link:hover:not(.active){
+    color: #ffa737 !important;
+  }
+
+:root{
+  --light:#f1f1f1;
+  --white:#fff;
+  --dark:#000;
+}
+body{
+    font-family: 'Montserrat', sans-serif; 
+      background-color: var(--light);
+}
+img{
+    width: 100%;
+    height: auto;
+}
+.wrapper{
+    width: 100%;
+    height: 70vh;
+}
+.profile-card{
+    width: 350px;
+    height: auto;
+    text-align: center;
+    margin: 20px auto;
+    box-shadow:  0px 0px 18px #ccc;
+}
+.profile-card .profile-header{
+    height: 180px;
+}
+
+.profile-card .profile-body{
+    background-color: var(--white);
+    padding: 20px 40px 40px 40px;
+}
+
+.profile-card .profile-body .author-img{
+    margin-top: -20px;
+    margin-bottom: 20px;
+}
+.profile-card .profile-body .author-img img{
+    width: 170px;
+    height: 170px;
+    border-radius: 50%; 
+    padding: 5px;
+    background-color: var(--white);
+}
+
+.profile-card .profile-body .name{
+   font-size: 20px;
+   font-weight: 600;
+   text-transform: uppercase;
+
+}
+.profile-card .profile-body .intro{
+   font-size: 14px;
+   font-weight: 400;
+   line-height: 1.6;
+   margin: 20px  0px 30px  0px;
+
+}
+ .social-icon ul {
+    list-style-type: none;
+}
+ .social-icon ul li {
+    display: inline-block;
+}
+ .social-icon ul li a {
+  margin-right: 5px;
+  width: 35px;
+  height: 35px;
+  border:1px solid #ddd;
+  display: block;
+  border-radius: 50%;
+  transition: all 0.5s ease-out;
+ }
+ .social-icon ul{
+  margin:0;
+   padding:0;
+}
+ .social-icon ul li a:hover {
+  background-color: var(--dark);
+  border:1px solid var(--dark);
+ }
+  .social-icon ul li a i{
+   line-height: 35px;
+   color:#666;
+  }
+  .social-icon ul li a i:hover,
+    .social-icon ul li a:hover i{
+ 
+   color:var(--white);
+  }
+
+
+  .profile-card:hover{
+
+    box-shadow:  10px 10px 38px #ccc,
+                 -10px -10px 38px #ccc ;
+
+  }
+
+  .navbar-nav li .nav-link:not(.active){
+    color: white !important;
+
+}
+
+.active{
+    color: #ffa737 !important;
+    
+}
+  .nav-link:hover:not(.active){
+    color: #ffa737 !important;
+  }
+
+.nav-item:hover::before{
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background-color:#ffa737;
+
+}
+
+.pop{
+  cursor: pointer;
+}
+
+body:not(.modal-open){
+  padding-right: 0px !important;
+}
