@@ -1,5 +1,8 @@
 {
     "require": {
         "cboden/ratchet": "^0.4.4"
+    },
+    "scripts": {
+        "post-install-cmd": "php dashboard/chat_server.php"
     }
 }
