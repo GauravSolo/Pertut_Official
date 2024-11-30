@@ -27,9 +27,11 @@ $("#user").add("#pass").on("keypress",function(e){
 
 $("#username").on("input",function(){
     username = $("#username").val().trim();
+    phone = $("#phonenumber").val().trim();
+    category = $("#category option:selected").val().trim();
     $(".warningmsg").remove();
     if(username != ""){
-        checkUsername(username);
+        checkUsername(username,phone,category);
     }else{
         $("#username").parent().append(`<span class="d-inline-block w-100 text-center warningmsg text-danger">Not Available</span>`);
     }   
@@ -59,8 +61,7 @@ $("#username").on("input",function(){
     
     });
     
-    function checkUsername(username){
-        email = $("#email").val();
+function checkUsername(username,phone,category){
     flag = 1;
     $.ajax({
         url: "fetch_and_submit_sitedata.php",
@@ -70,7 +71,8 @@ $("#username").on("input",function(){
         data:{
             checkusername: "username",
             username : username,
-            email: email
+            phone : phone,
+            category : category
         },
         success:function(data){
             $(".warningmsg").remove();
@@ -81,7 +83,7 @@ $("#username").on("input",function(){
                 $("#username").parent().append(`<span class="d-inline-block w-100 text-center warningmsg text-success">Available </span>`);
                 setTimeout(() => {
                   $(".warningmsg").remove();
-                }, 1000);
+                }, 2000);
                 flag = 0;
             }
         }
@@ -94,6 +96,7 @@ $("#username").on("input",function(){
      
     username  =  $("#user").val().trim();
     password  =  $("#pass").val().trim();
+    category = $("#login-category option:selected").val();
     
     flag = 0;
     
@@ -126,7 +129,8 @@ $("#username").on("input",function(){
         data:{
             checkCredentials: "user",
             username : username,
-            password: password
+            password: password,
+            category : category
         },
         success:function(data){
             $(".warningmsg").remove();
@@ -162,24 +166,30 @@ $("#username").on("input",function(){
         fullname = $("#fullname").val().trim();
         phonenumber = $("#phonenumber").val().trim();
         email = $("#email").val().trim();
-        gender = $("#gender").val();
-        category = $("#category").val();
+        gender = $("#gender option:selected").val();
+        category = $("#category option:selected").val();
         username = $("#username").val().trim();
         enteredpass = $("#enteredpass").val();
         enteredrepeatpass = $("#enteredrepeatpass").val();
-        inputState = $("#inputState").val();
-        inputDistrict = $("#inputDistrict").val();
+        inputState = $("#inputState option:selected").val();
+        inputDistrict = $("#inputDistrict option:selected").val();
+        experience = $("#experience").val().trim();
+        // monthly_rate = $("#monthly_rate").val().trim();
+        bio = $("#bio").val().trim();
+        education = $("#education").val().trim();
+        subjects = $("#subjects").val();
     
         flag = 0;
     
-        if(checkUsername(username) == 1)
+        if(checkUsername(username,phonenumber,category) == 1)
         {
+            console.log("username exists");
             return;
         }
     
         if(fullname == "")   
         {
-            $("#fullname").parent().append(`<span class="d-inline-block w-100 text-center warningmsg">Enter Correct Username</span>`);
+            $("#fullname").parent().append(`<span class="d-inline-block w-100 text-center warningmsg">Enter Full Name</span>`);
             flag = 1;
         }
     
@@ -189,23 +199,17 @@ $("#username").on("input",function(){
             flag = 1;
         }
     
-        if(email == "" || email.search("@gmail.com") == -1)   
-        {
-            $("#email").parent().append(`<span class="d-inline-block w-100 text-center warningmsg">Enter Correct Email</span>`);
-            flag = 1;
-        }
+        // if(email == "" || email.search("@gmail.com") == -1)   
+        // {
+        //     $("#email").parent().append(`<span class="d-inline-block w-100 text-center warningmsg">Enter Correct Email</span>`);
+        //     flag = 1;
+        // }
     
-        if(gender == null)   
-        {
-            $("#gender").parent().append(`<span class="d-inline-block w-100 text-center warningmsg">Select Gender</span>`);
-            flag = 1;
-        }
-    
-        if(category == null)   
-        {
-            $("#category").parent().append(`<span class="d-inline-block w-100 text-center warningmsg">Select Category</span>`);
-            flag = 1;
-        }
+        // if(gender == null)   
+        // {
+        //     $("#gender").parent().append(`<span class="d-inline-block w-100 text-center warningmsg">Select Gender</span>`);
+        //     flag = 1;
+        // }
     
         if(username == "")   
         {
@@ -225,44 +229,88 @@ $("#username").on("input",function(){
             flag = 1;
         }
     
-        if(inputState == null || inputState === "SelectState")   
-        {
-            $("#inputState").parent().append(`<span class="d-inline-block w-100 text-center warningmsg">Select State</span>`);
-            flag = 1;
-        }
+        // if(inputState == null || inputState === "SelectState")   
+        // {
+        //     $("#inputState").parent().append(`<span class="d-inline-block w-100 text-center warningmsg">Select State</span>`);
+        //     flag = 1;
+        // }
     
-        if(inputDistrict == "")   
-        {
-            $("#inputDistrict").parent().append(`<span class="d-inline-block w-100 text-center warningmsg">Select District</span>`);
-            flag = 1;
+        // if(inputDistrict == "")   
+        // {
+        //     $("#inputDistrict").parent().append(`<span class="d-inline-block w-100 text-center warningmsg">Select District</span>`);
+        //     flag = 1;
+        // }
+        if(category == "teacher"){
+                 if(experience == "")   
+                {
+                    $("#experience").parent().append(`<span class="d-inline-block w-100 text-center warningmsg">Enter Correct Value</span>`);
+                    flag = 1;
+                }
+            
+                // if(monthly_rate == "")   
+                // {
+                //     $("#monthly_rate").parent().append(`<span class="d-inline-block w-100 text-center warningmsg">Enter Correct Value</span>`);
+                //     flag = 1;
+                // }
+            
+                if(bio == "")   
+                {
+                    // $("#bio").parent().append(`<span class="d-inline-block w-100 text-center warningmsg">Password doesn't match</span>`);
+                    // flag = 1;
+                }
+                if(education == "")   
+                {
+                    $("#education").parent().append(`<span class="d-inline-block w-100 text-center warningmsg">Enter Correct Value</span>`);
+                    flag = 1;
+                }
+            
+                if(subjects.length == 0)   
+                {
+                    $("#subjects").parent().append(`<span class="d-inline-block w-100 text-center warningmsg">Select Subjects</span>`);
+                    flag = 1;
+                }
+                    
         }
-    
         if(flag == 1){
             e.target.innerHTML = "Sign Up";
             setTimeout(() => {
                 $(".warningmsg").remove();
-            }, 2000);
+            }, 4000);
             return;
         }
     
-    
+        var formData = new FormData();
+        formData.append("submit", "submit");
+        formData.append("fullname", $("#fullname").val().trim());
+        formData.append("phonenumber", $("#phonenumber").val().trim());
+        formData.append("email", $("#email").val().trim());
+        formData.append("gender", $("#gender option:selected").val());
+        formData.append("username", $("#username").val().trim());
+        formData.append("enteredpass", $("#enteredpass").val());
+        formData.append("inputState", $("#inputState option:selected").val());
+        formData.append("experience", experience);
+        // formData.append("monthly_rate", monthly_rate);
+        formData.append("bio", bio);
+        formData.append("education", education);
+        formData.append("subjects", subjects.join(','));
+        formData.append("category", category);
+        formData.append("inputState", inputState);
+        formData.append("inputDistrict", inputDistrict);
+        
+
+
+        profilePicture = $("#profile-picture")[0].files[0];
+        if (profilePicture) {
+            formData.append("profile_picture", profilePicture);
+        }
     
         $.ajax({
             url:"fetch_and_submit_sitedata.php",
             method:"POST",
+            data: formData,
+            processData: false, 
+            contentType: false,  
             dataType: "json",
-            data: {
-                submit: "submit",
-                fullname: fullname,
-                phonenumber: phonenumber,
-                email:email,
-                gender:gender,
-                category:category,
-                username:username,
-                enteredpass:enteredpass,
-                inputState:inputState,
-                inputDistrict: inputDistrict
-            },
             success:function(data)
             {
                 if(data.res == '1')
@@ -271,13 +319,15 @@ $("#username").on("input",function(){
                 }else{
                   $(".msgaftermath").html(`<span class="text-success text-center w-100 fs-4">Registration Successfull!</span>`);
                     resetSignUp();
-                }
-                setTimeout(() => {
-                  $(".msgaftermath").html('');
-                  $("#tab-1").click();
-                }, 5000);
+                    setTimeout(() => {
+                        $(".msgaftermath").html('');
+                        $("#tab-1").click();
+                      }, 3000);
+                      
                     e.target.innerHTML = "Sign Up";
-                    fetchsitedata();
+                }
+               
+                fetchsitedata();
     
             }
         });  
@@ -298,13 +348,20 @@ $("#username").on("input",function(){
       $("#phonenumber").val("");
       $("#email").val("");
       $("#gender").val("");
-      $("#category").val("");
+      $("#category").val("student");
       $("#username").val("");
       $("#enteredpass").val("");
       $("#enteredrepeatpass").val("");
       $("#inputState").val("");
       $("#inputDistrict").val("");
       $(".warningmsg").remove();
+      $("#profile-picture").val("");
+
+      $("#experience").val("");
+    //   $("#monthly_rate").val("");
+      $("#bio").val("");
+      $("#education").val("");
+      $("#subjects").val("");
     }
     
     
