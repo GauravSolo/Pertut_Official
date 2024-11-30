@@ -1,14 +1,9 @@
-# Step 1: Use the official PHP CLI base image
 FROM php:8.1-cli
 
-# Step 2: Set the working directory inside the container
 WORKDIR /app
 
-# Step 3: Copy application code to the working directory
 COPY . /app
 
-# Step 4 (Optional): Install any PHP extensions (if required)
 RUN docker-php-ext-install pdo pdo_mysql
 
-# Step 5: Define the command to run your PHP script
 CMD ["php", "dashboard/chat_server.php"]
