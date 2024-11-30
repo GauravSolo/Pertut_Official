@@ -53,8 +53,7 @@ iframe{
     z-index: -1;
     overflow: auto;
   }
-  
-  
+    
     </style>
   </head>
   <body>
@@ -118,13 +117,29 @@ PerTut                                </h1> -->
                            
             
 
+                          <!-- src='https://my.spline.design/pertutoriginal-39d285e9aea8c81a4f47059d837787e2/'  -->
+                          <!-- src='https://my.spline.design/pertutcopy-3e2e64796df983d3476d0a8a4a6d6e70/' -->
+
                     </div>
-                    <div class="col-12 col-sm-6 text-center d-sm-inline-block position-relative" style="min-height:450px;">
-                        <!-- <img src="images/croped-removebg-preview.png" style="width: 90%;" alt=""> -->
-                        <!-- <iframe src='https://my.spline.design/pertutoriginal-39d285e9aea8c81a4f47059d837787e2/' frameborder='0' width='100%' height='100%'></iframe> -->
-                          <iframe src='https://my.spline.design/pertutoriginal-39d285e9aea8c81a4f47059d837787e2/' frameborder='0' width='100%' height='100%' style="z-index:0!important;min-height:100%!important;"></iframe>
-                        <!-- <img src="images/cropvideo.gif" alt=""> -->
-                    </div>
+                    <div class="col-12 col-sm-6 text-center d-sm-inline-block position-relative" style="min-height:450px;z-index:0;">
+                      <div style="position: absolute; width: 100%; height: 100%; z-index: 10;" onclick="stop(event)"></div>
+                      <iframe 
+                          src='https://my.spline.design/pertutmodified-a3749f66c075d53193571961098a8093/'
+                          frameborder='0' 
+                          width='100%' 
+                          height='100%' 
+                          style="min-height:450px; pointer-events: none;">
+                      </iframe>
+                  </div>
+
+                  <script>
+                      function stop(e) {
+                          console.log("Click intercepted on overlay");
+                          e.preventDefault();
+                          e.stopPropagation();
+                          return false;
+                      }
+                  </script>
                 </div>
             </div>
 
@@ -200,7 +215,6 @@ PerTut                                </h1> -->
                               </section>
                             <!-- Section: Social media -->
                             <div style="color:transparent;">
-                              Namedsfsdstdddddddddddddddddd
                             </div>
                           </div>
                           <!-- Grid container -->
@@ -383,6 +397,9 @@ s0.parentNode.insertBefore(s1,s0);
 
 
 
+// document.querySelector('iframe').addEventListener('touchmove', (e) => {
+//     e.stopPropagation();
+// }, { passive: false });
 
 
 var myModal,invoiceModal1,invoiceModal2,invoiceModal3;
@@ -469,7 +486,7 @@ $.ajax({
     method:"POST",
     dataType: "json",
     data: {
-        sitedata: "sitedata"
+        sitedata: "sitedata",
     },
     success:function(data)
     {

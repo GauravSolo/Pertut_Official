@@ -8,8 +8,8 @@ include "config.inc.php";
 
 if(isset($_POST["sitedata"])){
 
-    $query1 = "SELECT COUNT(id) as student FROM StudentAndTeacher WHERE Category = 'Student'";
-    $query2 = "SELECT COUNT(id) as teacher FROM StudentAndTeacher WHERE Category = 'Teacher'";
+    $query1 = "SELECT COUNT(id) as student FROM students";
+    $query2 = "SELECT COUNT(teacher_id) as teacher FROM teachers";
 
     $st1 = $db->prepare($query1);
     $st2 = $db->prepare($query2);
@@ -32,9 +32,12 @@ if(isset($_POST["sitedata"])){
 if(isset($_POST["checkusername"]) && $_POST["checkusername"] == "username"){
 
     $username = strtolower($_POST["username"]);
-    $email = strtolower($_POST["email"]);
- 
-    $query1 = "SELECT Id FROM StudentAndTeacher WHERE Lower(Username) = '$username' AND Lower(Email) = '$email'";
+    $phone = $_POST["phone"];
+    $category = $_POST["category"];
+    $query1 = "SELECT Id FROM students WHERE Lower(Username) = '$username' OR Phone_Number = '$phone'";
+    if($category == "teacher"){
+        $query1 = "SELECT teacher_id as Id FROM teachers WHERE Lower(t_username) = '$username' OR phone = '$phone'";
+    }
 
     $st1 = $db->prepare($query1);
     $st1->execute();
@@ -59,7 +62,10 @@ if(isset($_POST["changeImage"]) && $_POST["changeImage"] == "image"){
     $url = $_POST["url"];
     $size = $_POST["size"];
  
-    $query1 = "UPDATE StudentAndTeacher SET Profile_Pic = '$url', Profile_Size = '$size' WHERE Id = '$_SESSION[id]'";
+    $query1 = "UPDATE students SET Profile_Pic = '$url', Profile_Size = '$size' WHERE Id = '$_SESSION[id]'";
+    if($_SESSION["cat"] == "teacher"){
+        $query1 = "UPDATE teachers SET profile_picture = '$url' WHERE teacher_id = '$_SESSION[id]'";
+    }
 
     $st1 = $db->prepare($query1);
 
@@ -82,7 +88,9 @@ if(isset($_POST["changeImage"]) && $_POST["changeImage"] == "image"){
 }
 if(isset($_POST["fetchProfilePic"]) && $_POST["fetchProfilePic"] == "pic"){
  
-    $query1 = "SELECT Profile_Pic FROM StudentAndTeacher  WHERE Id = '$_SESSION[id]'";
+    $query1 = "SELECT Profile_Pic FROM students  WHERE Id = '$_SESSION[id]'";
+    if($_SESSION["cat"] == "teacher")
+        $query1 = "SELECT profile_picture as Profile_Pic FROM teachers  WHERE teacher_id = '$_SESSION[id]'";
 
     $st1 = $db->prepare($query1);
 
@@ -107,38 +115,62 @@ if(isset($_POST["fetchProfilePic"]) && $_POST["fetchProfilePic"] == "pic"){
 
 }
 
-if(isset($_POST["setUserPackage"]) && $_POST["setUserPackage"] == "package"){
 
-    $type = $_POST["type"];
-    $paymentid = $_POST["paymentid"];
- 
-    if(empty($paymentid))
-    {
-        echo json_encode(array("error"=>1));
-        $db=null;
+
+if (isset($_POST["setUserEnrollment"]) && $_POST["setUserEnrollment"] == "enrollment") {
+
+    $student_id = $_SESSION["id"];
+    $teacher_id = $_POST["teacher_id"];
+    $course_id = $_POST["course_id"];
+    $payment_id = $_POST["payment_id"];
+
+    if (empty($payment_id) || empty($teacher_id) || empty($course_id)) {
+        echo json_encode(array("error" => 1, "message" => "Missing required inputs."));
+        $db = null;
         die();
     }
-    $query1 = "UPDATE StudentAndTeacher SET PackageType = '$type', PaymentId = '$paymentid' WHERE Id = '$_SESSION[id]'";
 
-    $st1 = $db->prepare($query1);
-
+    $checkQuery = "SELECT * FROM enrollments WHERE student_id = :student_id AND course_id = :course_id";
+    $checkStmt = $db->prepare($checkQuery);
+    $checkStmt->bindParam(':student_id', $student_id, PDO::PARAM_INT);
+    $checkStmt->bindParam(':course_id', $course_id, PDO::PARAM_INT);
+    
     try {
-        //code...
-        $st1->execute();
-        $error = 0;
-
-        $_SESSION["type"] = $type;
-        
-    } catch (\Throwable $th) {
-        //throw $th;
-        $error = 1;
+        $checkStmt->execute();
+        if ($checkStmt->rowCount() > 0) {
+            echo json_encode(array("error" => 1, "message" => "You are already enrolled in this course."));
+            $db = null;
+            die();
+        }
+    } catch (Throwable $th) {
+        echo json_encode(array("error" => 1, "message" => "Error checking enrollment.", "details" => $th->getMessage()));
+        $db = null;
+        die();
     }
 
-    echo json_encode(array("error"=>$error));
-    $db=null;
-    die();
+    $enrollQuery = "
+        INSERT INTO enrollments (student_id, course_id, teacher_id, payment_id, enrollment_date)
+        VALUES (:student_id, :course_id, :teacher_id, :payment_id, NOW())
+    ";
+    $enrollStmt = $db->prepare($enrollQuery);
 
+    try {
+        $enrollStmt->bindParam(':student_id', $student_id, PDO::PARAM_INT);
+        $enrollStmt->bindParam(':course_id', $course_id, PDO::PARAM_INT);
+        $enrollStmt->bindParam(':teacher_id', $teacher_id, PDO::PARAM_INT);
+        $enrollStmt->bindParam(':payment_id', $payment_id, PDO::PARAM_STR);
+        
+        $enrollStmt->execute();
+
+        echo json_encode(array("error" => 0, "message" => "Enrollment successful."));
+    } catch (Throwable $th) {
+        echo json_encode(array("error" => 1, "message" => "Error enrolling in course.", "details" => $th->getMessage()));
+    }
+
+    $db = null;
+    die();
 }
+
 
 if(isset($_POST["updateProfileData"]) && $_POST["updateProfileData"] == "profiledata"){
 
@@ -148,8 +180,9 @@ if(isset($_POST["updateProfileData"]) && $_POST["updateProfileData"] == "profile
     $password = $_POST["password"];
     
  
-    $query1 = "UPDATE StudentAndTeacher SET Full_Name = '$fullname', Email = '$email', Phone_Number = '$phone' WHERE Id = '$_SESSION[id]' AND `Password` = '$password'";
-
+    $query1 = "UPDATE students SET Full_Name = '$fullname', Email = '$email', Phone_Number = '$phone' WHERE Id = '$_SESSION[id]' AND `Password` = '$password'";
+    if($_SESSION["cat"] == "teacher")
+        $query1 = "UPDATE teachers SET `name` = '$fullname', email = '$email', `phone` = '$phone' WHERE teacher_id = '$_SESSION[id]' AND `password_hash` = '$password'";
     $st1 = $db->prepare($query1);
 
     try {
@@ -181,8 +214,12 @@ if(isset($_POST["checkCredentials"]) && $_POST["checkCredentials"] == "user"){
 
     $username = strtolower($_POST["username"]);
     $password = $_POST["password"];
+    $category = $_POST["category"];
 
-    $query1 = "SELECT Id,`Full_Name` as `name`,`Username` as username,Phone_Number as phone, Email as email, `Role`,`Profile_Pic` as dp , PackageType as type FROM StudentAndTeacher WHERE Lower(Username)= '$username' AND `Password` = '$password'";
+    $query1 = "SELECT Id,`Full_Name` as `name`,`Username` as username,Phone_Number as phone, Email as email, `Role`,`Profile_Pic` as dp FROM students WHERE Lower(Username)= '$username' AND `Password` = '$password'";
+
+    if($category == "teacher")
+        $query1 = "SELECT teacher_id as Id,`name`,`t_username` as username, phone, Email as email,`profile_picture` as dp FROM teachers WHERE Lower(t_username)= '$username' AND `password_hash` = '$password'";
 
     $st1 = $db->prepare($query1);
     $st1->execute();
@@ -190,7 +227,7 @@ if(isset($_POST["checkCredentials"]) && $_POST["checkCredentials"] == "user"){
 
     $error = 1;
 
-    if($row["Id"] == null){
+    if($st1->rowCount()<=0){
         $error = 1;
     }else{
         $error = 0;
@@ -198,47 +235,88 @@ if(isset($_POST["checkCredentials"]) && $_POST["checkCredentials"] == "user"){
         $_SESSION["id"] = $row["Id"]; 
         $_SESSION["fullname"] = $row["name"]; 
         $_SESSION["username"] = $row["username"]; 
-        $_SESSION["role"] = $row["Role"]; 
+        $_SESSION["role"] = $category == "Student"?$row["Role"]:-1; 
         $_SESSION["dp"] = $row["dp"]; 
         $_SESSION["email"] = $row["email"]; 
         $_SESSION["phone"] = $row["phone"]; 
-        $_SESSION["type"] = $row["type"]; 
+        $_SESSION["cat"] = $category; 
+
+        $sub_query = "
+            UPDATE enrollments e
+            JOIN courses c ON e.course_id = c.course_id
+            SET e.status = -1
+            WHERE DATE_ADD(e.enrollment_date, INTERVAL c.course_duration MONTH) < CURDATE()
+            AND e.status != -1
+            ";
+
+        try {
+        $sub_st = $db->prepare($sub_query);
+        $sub_st->execute();
+        } catch (Throwable $th) {
+        }
+
+
     }
 
-    echo json_encode(array("error"=>$error,"user"=>explode(" ",$row["name"])[0],"row"=>$row));
+    echo json_encode(array("error"=>$error,"user"=>isset($row["name"])?$row["name"]:""));
     $db=null;
     die();
 
 }
+if (isset($_POST["submit"]) && $_POST["submit"] == "submit") {
 
-if(isset($_POST["submit"]) && $_POST["submit"] == "submit"){
-
+    // Sanitize and validate inputs
     $fullname = $_POST["fullname"];
     $phonenumber = $_POST["phonenumber"];
     $email = $_POST["email"];
-    $gender = $_POST["gender"];
+    // $gender = $_POST["gender"];
     $category = $_POST["category"];
+    $gender = "male";
     $username = $_POST["username"];
     $password = $_POST["enteredpass"];
     $inputState = $_POST["inputState"];
     $inputDistrict = $_POST["inputDistrict"];
 
+    
+    $experience = $_POST["experience"];
+    // $monthly_rate = $_POST["monthly_rate"];
+    $bio = $_POST["bio"];
+    $education = $_POST["education"];
+    $subjects = $_POST["subjects"];
 
-    if($gender == "Male"){
-        $profilepic = "avatarmale.jpeg";
-    }else if($gender == "Female"){
-        $profilepic = "avatarfemale.jpeg";
-    }else{
-        $profilepic = "man.jpg";
+    // Handle profile picture upload
+    $profilePic = "";  // Default image
+
+    if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] == 0) {
+        $uploadedFile = $_FILES['profile_picture'];
+        $targetDir = "userlogo/";
+        $fileExtension = strtolower(pathinfo($uploadedFile['name'], PATHINFO_EXTENSION));
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+
+        // Validate file extension
+        if (in_array($fileExtension, $allowedExtensions)) {
+            // Generate unique file name
+            $profilePic = uniqid('profile_') . '.' . $fileExtension;
+            $targetFile = $targetDir . $profilePic;
+            
+            // Move the uploaded file to the server directory
+            if (move_uploaded_file($uploadedFile['tmp_name'], $targetFile)) {
+                // Successfully uploaded
+            }
+        }
     }
-
 
     $timestamp = date("Y-m-d H:i:s");
 
-    $query = "INSERT INTO StudentAndTeacher(`Full_Name`,Email,Phone_Number,`Username`,`Password`,Gender,Category,`State`,`City`,`Profile_Pic`,`Timestamp`)VALUES('$fullname','$email','$phonenumber','$username','$password','$gender','$category','$inputState','$inputDistrict','$profilepic','$timestamp')";
-
+    $query = "INSERT INTO students(`Full_Name`, Email, Phone_Number, `Username`, `Password`, Gender, `State`, `City`, `Profile_Pic`, `Timestamp`)
+              VALUES('$fullname', '$email', '$phonenumber', '$username', '$password', '$gender', '$inputState', '$inputDistrict', '$profilePic', '$timestamp')";
+    
+    if($category == "teacher"){
+        $query = "INSERT INTO teachers(`name`, email, phone, `t_username`, `password_hash`, gender,experience,bio,education,expertise,`profile_picture`, `created_at`)
+              VALUES('$fullname', '$email', '$phonenumber', '$username', '$password', '$gender','$experience','$bio','$education','$subjects','$profilePic', '$timestamp')";
+    }
+    echo $query;
     $stmt = $db->prepare($query);
-
 
     try {
         $stmt->execute();
@@ -247,10 +325,12 @@ if(isset($_POST["submit"]) && $_POST["submit"] == "submit"){
         $error = 1;
     }
 
-    echo json_encode(array("res"=>$error));
-    $db=null;
+    echo json_encode(array("res" => $error));
+    $db = null;
     die();
 }
+
+
 if(isset($_POST["saveEmail"]) && $_POST["saveEmail"] == "email"){
 
     $email = $_POST["email"];
@@ -276,7 +356,7 @@ if(isset($_POST["saveEmail"]) && $_POST["saveEmail"] == "email"){
 if(isset($_POST["fetchpertutusers"]) && $_POST["fetchpertutusers"] == "users"){
 
 
-    $query1 = "SELECT *, DATE(`Timestamp`) as Joined FROM StudentAndTeacher";
+    $query1 = "SELECT *, DATE(`Timestamp`) as Joined FROM students";
 
     $st1 = $db->prepare($query1);
     $st1->execute();

@@ -176,7 +176,7 @@
                             <i class="fas fa-phone"></i>
                             <div class="cta-text">
                                 <h4>Call us</h4>
-                                <span><span class="text-white">8077890103</span> OR <span class="text-white">9548523294</span></span>
+                                <span class="text-white">9548523294</span>
                             </div>
                         </div>
                     </div>
@@ -248,7 +248,7 @@
                 <div class="row">
                     <div class="col-xl-6 col-lg-6 text-center text-lg-left">
                         <div class="copyright-text">
-                            <p>Copyright &copy; 2022 Pertut Official, All Right Reserved</p>
+                            <p>Copyright &copy; 2024 Pertut Official, All Right Reserved</p>
                         </div>
                     </div>
                     <div class="col-xl-6 col-lg-6 d-none d-lg-block text-right">

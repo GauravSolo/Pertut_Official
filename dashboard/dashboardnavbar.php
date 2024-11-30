@@ -32,20 +32,65 @@
                             <span class="hide-menu">Profile</span>
                         </a>
                     </li>
+                    <?php
+                    if(isset($_SESSION["id"]) && $_SESSION["cat"] == "teacher"){
+                    ?>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link waves-effect waves-dark <?php echo ($pathname == "users_chat")?"selected":""; ?>" href="users_chat.php"
+                            aria-expanded="false">
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                            <span class="hide-menu">Chat</span>
+                        </a>
+                    </li>
+                    <?php
+                    }
+                    ?>
+                    <?php
+                    if(isset($_SESSION["id"]) && $_SESSION["cat"] == "teacher"){
+                    ?>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link waves-effect waves-dark <?php echo ($pathname == "students")?"selected":""; ?>" href="analytics.php"
+                            aria-expanded="false">
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                            <span class="hide-menu">Analytics</span>
+                        </a>
+                    </li>
+                    <?php
+                    }
+                    ?>
+                    <?php
+                    if(isset($_SESSION["id"]) && $_SESSION["cat"] == "teacher"){
+                    ?>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link waves-effect waves-dark <?php echo ($pathname == "create_course")?"selected":""; ?>" href="create_course.php"
+                            aria-expanded="false">
+                            <i class="fa fa-columns" aria-hidden="true"></i>
+                            <span class="hide-menu">Create Courses</span>
+                        </a>
+                    </li>
+                    <?php
+                    }
+                    ?>
+                    <?php
+                    if(isset($_SESSION["id"]) && $_SESSION["cat"] == "student"){
+                    ?>
                     <li class="sidebar-item">
                         <a class="sidebar-link waves-effect waves-dark <?php echo ($pathname == "packages")?"selected":""; ?>" href="packages.php"
                             aria-expanded="false">
                             <i class="fa fa-columns" aria-hidden="true"></i>
-                            <span class="hide-menu">My Packages</span>
+                            <span class="hide-menu">My Courses</span>
                         </a>
                     </li>
-                    <li class="sidebar-item">
+                    <?php
+                    }
+                    ?>
+                    <!-- <li class="sidebar-item">
                         <a class="sidebar-link waves-effect waves-dark <?php echo ($pathname == "todo")?"selected":""; ?>" href="todo.php"
                             aria-expanded="false">
                             <i class="fa fa-table" aria-hidden="true"></i>
                             <span class="hide-menu">To Do</span>
                         </a>
-                    </li>
+                    </li> -->
                     <?php
 
                     if(isset($_SESSION["id"]) && $_SESSION["role"] == '1'){

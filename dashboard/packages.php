@@ -1,6 +1,6 @@
 <?php
-  session_start();
-    
+                                include "../config.inc.php";
+
 if(isset($_SESSION['id'])){
 
 }else{
@@ -27,7 +27,8 @@ if(isset($_SESSION['id'])){
     <!-- Custom CSS -->
    <link href="css/style.min.css" rel="stylesheet">
    <style>
-             .logoname{
+           
+           .logoname{
        display:block;
  }
  .logoimage{
@@ -42,7 +43,180 @@ if(isset($_SESSION['id'])){
        display:block;
  }
 }
+.courses-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
 
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 220px;
+    height: 250px;
+    /* margin: 0.5rem; */
+    /* margin-inline:auto; */
+}
+
+.card h4 {
+    margin: 8px 0;
+}
+
+.card p {
+    margin: 4px 0;
+}
+
+.card .primary {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.card-container {
+	background-color: ##e1e7ec;
+	border-radius: 5px;
+	box-shadow: 0px 10px 20px -10px rgba(0,0,0,0.75);
+	color: #6f7282;
+	padding-top: 20px;
+	position: relative;
+	width: 350px;
+	max-width: 100%;
+	text-align: center;
+}
+.card-container h3{
+    font-weight:bold;
+    color: darkslategray;
+}
+
+/* .card-container .pro {
+	color: #231E39;
+	background-color: #FEBB0B;
+	border-radius: 3px;
+	font-size: 14px;
+	font-weight: bold;
+	padding: 3px 7px;
+	position: absolute;
+	top: 30px;
+	left: 30px;
+} */
+
+.card-container .image {
+	border: 1px solid #03BFCB;
+	border-radius: 50%;
+	padding: 7px;
+}
+
+.rating{
+    color : orange;
+}
+
+button.primary {
+	background-color: #03BFCB;
+	border: 1px solid #03BFCB;
+	border-radius: 3px;
+	color: #231E39;
+	font-family: Montserrat, sans-serif;
+	font-weight: 500;
+	padding: 10px 25px;
+}
+
+button.primary.ghost {
+	background-color: transparent;
+	color: #02899C;
+}
+
+.skills {
+	background-color: #1F1A36;
+	text-align: left;
+	padding: 15px;
+	margin-top: 30px;
+}
+
+.skills ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+.skills ul li {
+	border: 1px solid #2D2747;
+	border-radius: 2px;
+	display: inline-block;
+	font-size: 12px;
+	margin: 0 7px 7px 0;
+	padding: 7px;
+}
+#teacher-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns on large screens */
+    gap: 20px; /* Space between the cards */
+    padding: 20px; /* Padding around the grid */
+}
+
+/* For medium screens (e.g., tablets, 2 columns) */
+@media (max-width: 1200px) {
+    #teacher-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    }
+}
+
+/* For small screens (e.g., mobile, 1 column) */
+@media (max-width: 768px) {
+    #teacher-container {
+        grid-template-columns: 1fr; /* 1 column */
+    }
+}
+
+/* Optional: Styling for individual teacher cards */
+.card-container {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.course-card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    height: 200px;
+    margin: 10px 0;
+    border-radius: 5px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.course-card h4 {
+    margin: 0 0 5px;
+}
+
+.course-card p {
+    margin: 5px 0;
+}
+
+.course-card button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.course-card button:hover {
+    background-color: #0056b3;
+}
+.image {
+	border: 1px solid #03BFCB;
+	border-radius: 50%;
+	padding: 7px;
+    width:50px;
+}
    </style>
 </head>
 
@@ -143,96 +317,94 @@ if(isset($_SESSION['id'])){
                 <!-- Start Page Content -->
                 <!-- ============================================================== -->
                 <div class="row">
-                    <div class="col-md-12">
+                   <div class="col-12  mx-auto my-2" id="msg"></div>
                         <div class="white-box">
+                            
                             <?php
-                            if($_SESSION["type"] == '0'){
+
+                                $student_id = $_SESSION['id'];
+
+                                $course_query = "
+                                SELECT c.*, 
+                                    CASE 
+                                        WHEN e.student_id IS NOT NULL THEN 1
+                                        ELSE 0
+                                    END AS is_enrolled,
+                                    t.name,
+                                    t.profile_picture,
+                                    t.gender
+                                FROM courses c
+                                LEFT JOIN enrollments e 
+                                ON c.course_id = e.course_id  AND e.student_id = '".$student_id."' LEFT JOIN teachers t ON c.teacher_id = t.teacher_id 
+                                WHERE e.status = 1";
+                                
+                                $error = 0;
+                                $courses = array();
+                                try {
+                                    $st = $db->prepare($course_query);
+                                    $st->execute();
+                                    $courses = $st->fetchAll(PDO::FETCH_ASSOC);
+                                } catch (Throwable $th) {
+                                    $error = 1;
+                                }
                             ?>
-                            <h3 class="box-title text-center">No Package</h3>
-
-                            <?php } ?>
-                            <h3 class="box-title text-center text-info" style="cursor: pointer;" onclick="javascript:window.location.href='dashboard.php'">Click Here to Select Package</h3>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                    <div class="row justify-content-center">
-                   <div class="col-12  mx-auto my-2" id="msg">
-                    </div>
-<?php
-
-if($_SESSION["type"] == '1'){
-?>
-
-                    <div class="col-lg-4 col-md-12">
-                        <div class="white-box analytics-info">
-                            <h3 class="box-tite fw-bold mb-3" style="border-bottom:2px solid orange;color:purple;">PERTUT ONLINE</h3>
-                            <div class="row d-flex flex-row justify-content-between align-items-center">
-                                <div class="col-12 col-sm-8 fs-4" style="text-align: justify;">
-                                    Get one-on-one Tutorship By Our Professional Tutor on Your Desktop or Mobile. <br>
-                                    They will teach you throughout your academics.
-                                    And Doubt solving sessions.
-                                </div>
-                                <div class="col-12 col-sm-4 mt-3">
-                                    <button class="btn btn-primary d-flex ms-auto disabled" type="button" >Purchased</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="white-box analytics-info">
-                            <h3 class="box-tite fw-bold mb-3" style="border-bottom:2px solid orange;color:purple;">PERTUT Platform Test</h3>
-                            <div class="row d-flex flex-row justify-content-between align-items-center">
-                                <div class="col-12 col-sm-8 fs-4" style="text-align: justify;">
-                                   You can track your progress (FREE) and Tutor will get to know  your performance here.<br>
-                                   Weekly test and reward will be announce.
-                                   *FREE on after purchase of Pertut Online or Pertut Offline
-                                </div>
-                                <div class="col-12 col-sm-4 mt-3">
-                                    <button class="btn btn-primary d-flex ms-auto disabled" type="button">FREE</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-<?php } ?>
-<?php
-
-if($_SESSION["type"] == '2'){
-?>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="white-box analytics-info">
-                            <h3 class="box-tite fw-bold mb-3" style="border-bottom:2px solid orange;color:purple;">PERTUT OFFLINE</h3>
-                            <div class="row d-flex flex-row justify-content-between align-items-center">
-                                <div class="col-12 col-sm-8 fs-4" style="text-align: justify;">
-                                    Get one-on-one Tutorship By Our Professional Tutor  at Your Home. <br>
-                                    They will come  your home to teach you EVERYDAY (except Sunday) .
-                                    Take <strong>3 days </strong>trial.
-                                </div>
-                                <div class="col-12 col-sm-4 mt-3">
-                                    <button class="btn btn-primary d-flex ms-auto disabled" type="button"  >JOIN</button>
+                   <div class="col-12 px-3 courses">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h4 class="page-title" style="border-bottom: 1px solid;font-weight:bold;color:orange;">Courses</h4>
+                                    </div>
+                                    <div class="col d-flex flex-wrap" style="gap:1rem;">
+                                        <?php 
+                                        if(empty($courses)){
+                                        ?>
+                                        <div class="d-flex flex-column align-items-center justify-content-center w-100">
+                                            <h3 class="box-title text-center">No Package</h3>
+                                            <h3 class="box-title text-center text-info" style="cursor: pointer;" onclick="javascript:window.location.href='dashboard.php'">Click Here to Select Package</h3>
+                                        </div>
+                                        <?php
+                                        }
+                                            foreach($courses as $course){
+                                        ?>
+                                        <div class="card">
+                                                    <div class="d-flex flex-column align-items-center">
+                                                    <?php
+                                                        $gender = 'men';
+                                                        if($course["gender"] == 'male'){
+                                                            $gender = 'men';
+                                                        }else{
+                                                            $gender = 'women';
+                                                        }
+                                                        $url = '';
+                                                        if(trim($course["profile_picture"]) == ""){
+                                                            $randomNumber = rand(0, 99);
+                                                            $url = "https://randomuser.me/api/portraits/$gender/$randomNumber.jpg";
+                                                        }else{
+                                                            $url = "../userlogo/".$course["profile_picture"];
+                                                        }
+                                                        ?>
+                                                        <img class="image" src="<?php echo $url; ?>"  />
+                                                        <h4 class="ms-3 fw-bold"><?php echo $course['name']; ?></h4>
+                                                    </div>
+                                            <h4 class="fw-bold mb-0">Course : <?php echo $course['course_name']; ?></h4>
+                                            <h4 class="fw-bold">Code : <?php echo $course['course_code']; ?></h4>
+                                            <p><?php echo $course['course_description']; ?></p>
+                                            <p class="mt-auto"><strong>Duration:</strong> <?php echo $course['course_duration']; ?> months</p>
+                                            <?php if ($course['is_enrolled']) { ?>
+                                                <button class="primary" onclick="javascript:location.href='course.php?teacher_id=<?php echo $course['teacher_id']; ?>&course_id=<?php echo $course['course_id']; ?>'">Go to Course</button>
+                                            <?php } else { ?>
+                                                <button class="primary" onclick="processPayment(event,<?php echo $course['course_id']; ?>,<?php echo $course['teacher_id']; ?>,<?php echo $course['monthly_rate']; ?>)">Enroll</button>
+                                            <?php } ?>
+                                        </div>
+                                        <?php
+                                            }
+                                        ?>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="white-box analytics-info">
-                            <h3 class="box-tite fw-bold mb-3" style="border-bottom:2px solid orange;color:purple;">PERTUT Platform Test</h3>
-                            <div class="row d-flex flex-row justify-content-between align-items-center">
-                                <div class="col-12 col-sm-8 fs-4" style="text-align: justify;">
-                                   You can track your progress (FREE) and Tutor will get to know  your performance here.<br>
-                                   Weekly test and reward will be announce.
-                                   *FREE on after purchase of Pertut Online or Pertut Offline
-                                </div>
-                                <div class="col-12 col-sm-4 mt-3">
-                                    <button class="btn btn-primary d-flex ms-auto disabled" type="button">FREE</button>
-                                </div>
+
                             </div>
-                        </div>
+
                     </div>
-<?php } ?>
-                   
-                </div>
-                    </div>
-                </div>
                 <!-- ============================================================== -->
                 <!-- End PAge Content -->
                 <!-- ============================================================== -->

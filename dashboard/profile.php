@@ -58,53 +58,33 @@ if(isset($_SESSION['id'])){
     animation: none;
   }
 }
+.thumb-lg{
+    cursor: pointer;
+}
 
    </style>
 </head>
 
 <body>
-   <!-- ============================================================== -->
-   <!-- Preloader - style you can find in spinners.css -->
-   <!-- ============================================================== -->
    <div class="preloader">
        <div class="lds-ripple">
            <div class="lds-pos"></div>
            <div class="lds-pos"></div>
        </div>
    </div>
-   <!-- ============================================================== -->
-   <!-- Main wrapper - style you can find in pages.scss -->
-   <!-- ============================================================== -->
    <div id="main-wrapper" data-layout="vertical" data-navbarbg="skin5" data-sidebartype="full"
        data-sidebar-position="absolute" data-header-position="absolute" data-boxed-layout="full">
-       <!-- ============================================================== -->
-       <!-- Topbar header - style you can find in pages.scss -->
-       <!-- ============================================================== -->
        <header class="topbar" data-navbarbg="skin5">
            <nav class="navbar top-navbar navbar-expand-md navbar-dark">
                <div class="navbar-header" data-logobg="skin6">
-                   <!-- ============================================================== -->
-                   <!-- Logo -->
-                   <!-- ============================================================== -->
                    <a class="navbar-brand" href="../index.php">
-                       <!-- Logo icon -->
                        <b class="logo-icon logoimage">
-                           <!-- Dark Logo icon -->
                            <img src="../images/pertutlogosvgtransaprent.svg" style="width:75px;" alt="homepage" />
                        </b>
-                       <!--End Logo icon -->
-                       <!-- Logo text -->
                        <span class="logo-text logoname">
-                           <!-- dark Logo text -->
                            <img src="../images/logo1t.png" style="width:75%;"  alt="homepage" />
                        </span>
                    </a>
-                   <!-- ============================================================== -->
-                   <!-- End Logo -->
-                   <!-- ============================================================== -->
-                   <!-- ============================================================== -->
-                   <!-- toggle and nav items -->
-                   <!-- ============================================================== -->
                    <a class="nav-toggler waves-effect waves-light text-dark d-block d-md-none"
                        href="javascript:void(0)"><i class="ti-menu ti-close"></i></a>
                </div>
@@ -113,59 +93,28 @@ if(isset($_SESSION['id'])){
                     ?>
            </nav>
        </header>
-       <!-- ============================================================== -->
-       <!-- End Topbar header -->
-       <!-- ============================================================== -->
-       <!-- ============================================================== -->
-       <!-- Left Sidebar - style you can find in sidebar.scss  -->
-       <!-- ============================================================== -->
        <aside class="left-sidebar" data-sidebarbg="skin6">
-           <!-- Sidebar scroll-->
            <div class="scroll-sidebar">
-               <!-- Sidebar navigation-->
                <?php
                include "dashboardnavbar.php";
                ?>
-               <!-- End Sidebar navigation -->
            </div>
-           <!-- End Sidebar scroll-->
        </aside>
-        <!-- ============================================================== -->
-        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Page wrapper  -->
-        <!-- ============================================================== -->
         <div class="page-wrapper">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
             <div class="page-breadcrumb bg-white">
                 <div class="row align-items-center">
                     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
                         <h4 class="page-title">Profile page</h4>
                     </div>
                 </div>
-                <!-- /.col-lg-12 -->
             </div>
             <div class="col-12">
             <div class="progress" style="height:5px;display:none;">
                 <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
                 </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Container fluid  -->
-            <!-- ============================================================== -->
             <div class="container-fluid">
-                <!-- ============================================================== -->
-                <!-- Start Page Content -->
-                <!-- ============================================================== -->
-                <!-- Row -->
                 <div class="row">
-                    <!-- Column -->
                     <div class="col-12  mx-auto my-2" id="msg">
                     </div>
                     <div class="col-lg-4 col-xlg-3 col-md-12">
@@ -249,41 +198,13 @@ if(isset($_SESSION['id'])){
                     </div>
                     <!-- Column -->
                 </div>
-                <!-- Row -->
-                <!-- ============================================================== -->
-                <!-- End PAge Content -->
-                <!-- ============================================================== -->
-                <!-- ============================================================== -->
-                <!-- Right sidebar -->
-                <!-- ============================================================== -->
-                <!-- .right-sidebar -->
-                <!-- ============================================================== -->
-                <!-- End Right sidebar -->
-                <!-- ============================================================== -->
             </div>
-            <!-- ============================================================== -->
-            <!-- End Container fluid  -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- footer -->
-            <!-- ============================================================== -->
             <?php
           include "dashboardfooter.php";
           ?>
-            <!-- ============================================================== -->
-            <!-- End footer -->
-            <!-- ============================================================== -->
         </div>
-        <!-- ============================================================== -->
-        <!-- End Page wrapper  -->
-        <!-- ============================================================== -->
+        
     </div>
-    <!-- ============================================================== -->
-    <!-- End Wrapper -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- All Jquery -->
-    <!-- ============================================================== -->
     <script src="plugins/bower_components/jquery/dist/jquery.min.js"></script>
     <!-- Bootstrap tether Core JavaScript -->
     <script src="bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -349,7 +270,6 @@ if(isset($_SESSION['id'])){
                             type: 'POST',
                             success: function (response) {
 
-                                // display success response from the server
                                 if(response.error == 0)
                                 {
 
@@ -429,7 +349,9 @@ if(isset($_SESSION['id'])){
 
                                 }else{
                                     $("#msg").html(`<span class="text-center text-danger w-100" style="font-size:1.5rem;">Profile Pic Couldnt Updated!</span>`);
-
+                                    setTimeout(() => {
+                                        $("#msg").html("");
+                                    }, 3000);
                                     $(".progress").hide();
                                     $(".progress-bar").css('width', '0%');  
                                 }
@@ -438,9 +360,11 @@ if(isset($_SESSION['id'])){
 
                             },
                             error: function (response) {
-                                console.log("Couldnt upload photo"); // display error response from the server
+                                console.log("Couldnt upload photo"); 
                                 $("#msg").html(`<span class="text-center text-danger w-100" style="font-size:1.5rem;">Profile Pic Couldnt Updated!</span>`);
-                                
+                                setTimeout(() => {
+                                        $("#msg").html("");
+                                    }, 3000);
 
                                     $(".progress").hide();
                                     $(".progress-bar").css('width', '0%');  
@@ -468,11 +392,15 @@ if(isset($_SESSION['id'])){
                                     $("#sidelogo").prop("src","../userlogo/"+url);
                                     $("#msg").html(`<span class="text-center text-success w-100" style="font-size:1.5rem;">Profile Pic Updated successfully!</span>`);
 
-
+                                    setTimeout(() => {
+                                        $("#msg").html("");
+                                    }, 3000);
                                     console.log("done");
                                 }else{
                                     $("#msg").html(`<span class="text-center text-danger w-100" style="font-size:1.5rem;">Profile Pic Couldnt Updated!</span>`);
-
+                                    setTimeout(() => {
+                                        $("#msg").html("");
+                                    }, 3000);
                                     console.log("errrsd");
                                 }
                                     $(".progress").hide();

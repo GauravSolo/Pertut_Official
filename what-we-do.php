@@ -104,7 +104,7 @@
 
 .area{
     background: red;  
-    background:linear-gradient(to right, rgb(57, 106, 252), rgb(41, 72, 255));
+    background:linear-gradient(to right, rgba(57, 106, 252,0.8), rgb(41, 72, 255,0.8));
     width: 100%;
     /* height:100vh; */
     position:relative;
@@ -240,7 +240,8 @@
   transform:scale(1.05);
 }
 .buycard:hover{
-  box-shadow: 2px 2px 10px , -2px -2px 10px ; 
+  box-shadow: 3px 3px 10px #7c6666; 
+  cursor : pointer;
 }
 .logoname{
         display:block;
@@ -257,6 +258,17 @@
         display:block;
   }
 }
+
+
+
+.buycard{
+        background : whitesmoke !important;
+      }
+
+
+      .modal-content{
+        height: fit-content;
+      }
     </style>
   </head>
   <body>
@@ -306,7 +318,6 @@
                                     They will teach you throughout your academics.
                                     And Doubt solving sessions.                                                                  </p>
                 <div class="col-12 mt-3 d-flex justify-content-between" style="font-size:1.2rem;">
-                  <div class="d-flex justify-content-center align-items-center fw-bold fs-4 " style="color:purple;"><s class="fs-6">Rs. 999 &nbsp;</s> Rs.99 / <span class="fs-6 "> month</span></div>
                   <div class="pop button text-white py-1 px-3 d-flex justify-content-center align-items-center" style="background-color: #ffa737;border-radius: 50px;"><a class="text-decoration-none text-white" onclick="openRegisterModal()" id="joinonline" href="<?php echo isset($_SESSION["id"])?"dashboard/dashboard.php":'#!';  ?>">JOIN</a>
                   </div>
                 </div>

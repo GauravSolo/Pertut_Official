@@ -1,11 +1,5 @@
 <?php
-  include 'config.php';
-
-
-  session_start();
-    
-
-
+  include 'config.inc.php';
 ?>
 
 <!doctype html>
@@ -281,8 +275,9 @@
 </div>
 
 
-<div class="row m-0 d-flex flex-column align-items-around justify-content-around position-relative" style="background-color:#f7f8f9; min-height:100vh">
-<svg version="1.1" id="home-anim" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+<div class="row m-0 d-flex flex-column align-items-around justify-content-around position-relative my-3" style="background-color:#f7f8f9;">
+      <div class="col-12">
+      <svg version="1.1" id="home-anim" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
    viewBox="0 0 1820 1080" style="enable-background:new 0 0 1820 1080;" xml:space="preserve">
 
   <g id="home">
@@ -391,23 +386,18 @@
   </g>
 </g>
 </svg>
-    <div class="col-12 text-center w-75 mx-auto my-4" style="z-index:100;">
-        <h1 class="fs-1" style="font-weight:700; color: #202020; font-family: 'Source Sans Pro';">The Right People In The Right Jobs</h1>
-        <!-- <p class="w-75 mx-auto"> Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda magni impedit doloribus ea voluptatem vel veniam accusamus minima recusandae. Perferendis.</p> -->
-    </div>
+      </div>
     <div class="col-12"  style="z-index:100;">
-        <div class="row">
-            <div  class="col p-0 m-0 d-flex flex-column flex-lg-row justify-content-evenly ">
-
-            <div class="wrapper my-4">
+        
+    <div class="wrapper my-4">
 
 <div class="profile-card">
     <div class="profile-header">
-        <img src="images/computer2.jpg" alt="">
+        <img src="images/bhu.jpg" alt="">
     </div>
     <div class="profile-body">
           <div class="author-img">
-              <img src="images/Gaurav.jpg" alt="">
+              <img src="userlogo/ai2.jpg" alt="">
           </div>
           <div class="name">Gaurav Sharma</div>
           <div class="intro">
@@ -418,7 +408,9 @@
              <p>
              Founder 
              </p>
-             GAGAN COLLEGE OF MANAGEMENT & TECHNOLOGY, Aligarh 
+             <p class="fw-bold" >
+             BANARAS HINDU UNIVERSITY
+             </p>
           </div>
           <div class="social-icon">
               <ul>
@@ -450,63 +442,6 @@
 
 
 </div>  
-<div class="wrapper my-4">
-
-<div class="profile-card">
-<div class="profile-header">
-    <img src="images/bg2.jpeg" alt="">
-</div>
-<div class="profile-body">
-      <div class="author-img">
-          <img src="images/harshit.png" alt="">
-      </div>
-      <div class="name">Harshit Sharma</div>
-      <div class="intro">
-         <!-- <p>Robert smith is an enthsiastic and passionate story
-             Teller.He loves to do different
-              home-made things and share to the world.
-         </p> -->
-         <p>
-         Founder
-         </p>
-         GAGAN COLLEGE OF MANAGEMENT & TECHNOLOGY, Aligarh
-      </div>
-      <div class="social-icon">
-          <ul>
-              <li>
-                  <a href="#">
-                      <i class="fab fa-facebook-f"></i>
-                  </a>
-              </li>
-              <li>
-                  <a href="#">
-                      <i class="fab fa-twitter"></i>
-                  </a>
-              </li>
-             
-              <li>
-                  <a href="#">
-                      <i class="fab fa-instagram"></i>
-                  </a>
-              </li>
-              <li>
-                  <a href="#">
-                      <i class="fab fa-google-plus-g"></i>
-                  </a>
-              </li>
-          </ul>
-      </div>
-</div>
-</div>
-
-
-</div>
-
-
-
-
-            </div>
-        </div>
     </div>
 </div>
 

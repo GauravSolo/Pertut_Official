@@ -46,10 +46,117 @@ if(isset($_SESSION['id'])){
 .white-box.analytics-info:hover{
     box-shadow:2px 2px 10px rgb(224, 182, 103), -2px -2px 10px rgb(224, 182, 103);
     transform: scale(1.002);
+    cursor :pointer;
 }
 
 
+.card-container {
+	background-color: ##e1e7ec;
+	border-radius: 5px;
+	box-shadow: 0px 10px 20px -10px rgba(0,0,0,0.75);
+	color: #6f7282;
+	padding-top: 20px;
+	position: relative;
+	width: 350px;
+	max-width: 100%;
+	text-align: center;
+}
+.card-container h3{
+    font-weight:bold;
+    color: darkslategray;
+}
 
+/* .card-container .pro {
+	color: #231E39;
+	background-color: #FEBB0B;
+	border-radius: 3px;
+	font-size: 14px;
+	font-weight: bold;
+	padding: 3px 7px;
+	position: absolute;
+	top: 30px;
+	left: 30px;
+} */
+
+.card-container .image {
+	border: 1px solid #03BFCB;
+	border-radius: 50%;
+	padding: 7px;
+}
+
+.rating{
+    color : orange;
+}
+
+button.primary {
+	background-color: transparent;
+	border: 1px solid #03BFCB;
+	border-radius: 3px;
+	color: #02899C;
+	font-family: Montserrat, sans-serif;
+	font-weight: 500;
+	padding: 10px 25px;
+}
+
+button.primary:hover{
+	color: #231E39;
+	background-color: #03BFCB;
+}
+
+.skills {
+	background-color: #1F1A36;
+	text-align: left;
+	padding: 15px;
+	margin-top: 30px;
+}
+
+.skills ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+.skills ul li {
+	border: 1px solid #2D2747;
+	border-radius: 2px;
+	display: inline-block;
+	font-size: 12px;
+	margin: 0 7px 7px 0;
+	padding: 7px;
+}
+#teacher-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns on large screens */
+    gap: 20px; /* Space between the cards */
+    padding: 20px; /* Padding around the grid */
+}
+
+/* For medium screens (e.g., tablets, 2 columns) */
+@media (max-width: 1200px) {
+    #teacher-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns */
+    }
+}
+
+/* For small screens (e.g., mobile, 1 column) */
+@media (max-width: 768px) {
+    #teacher-container {
+        grid-template-columns: 1fr; /* 1 column */
+    }
+}
+
+/* Optional: Styling for individual teacher cards */
+.card-container {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.card-container img{
+    width: 143.6px;
+    height: 143.6px;
+}
     </style>
 </head>
 
@@ -137,8 +244,14 @@ if(isset($_SESSION['id'])){
             <!-- ============================================================== -->
             <div class="page-breadcrumb bg-white">
                 <div class="row align-items-center">
-                    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                    <div class="col-12 d-flex justify-content-between">
                         <h4 class="page-title">Dashboard</h4>
+                        <div class="d-flex flex-column flex-sm-row">
+                            <input type="text" class="form-control me-3" oninput="filter()" id="search_teacher" placeholder="Search ..."  style="border:1px solid #ccc;max-width:300px;">
+                            <select name="" id="subject-list" class="form-select" onchange="filter()" style="max-width:300px;">
+                                <option value="" selected>Select Subject</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <!-- /.col-lg-12 -->
@@ -156,63 +269,9 @@ if(isset($_SESSION['id'])){
                 <div class="row justify-content-center">
                    <div class="col-12  mx-auto my-2" id="msg">
                     </div>
-<?php
+                    <div class="col-12" id="teacher-container">
 
-if($_SESSION["type"] != '1'){
-?>
-
-                    <div class="col-lg-4 col-md-12">
-                        <div class="white-box analytics-info">
-                            <h3 class="box-tite fw-bold mb-3" style="border-bottom:2px solid orange;color:purple;">PERTUT ONLINE</h3>
-                            <div class="row d-flex flex-row justify-content-between align-items-center">
-                                <div class="col-12 col-sm-8 fs-4" style="text-align: justify;">
-                                    Get one-on-one Tutorship By Our Professional Tutor on Your Desktop or Mobile. <br>
-                                    They will teach you throughout your academics.
-                                    And Doubt solving sessions.
-                                </div>
-                                <div class="col-12 col-sm-4 mt-3">
-                                    <button class="btn btn-primary d-flex ms-auto " type="button" onclick="processPayment(event,1)">JOIN</button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
-<?php } ?>
-<?php
-
-if($_SESSION["type"] != '2'){
-?>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="white-box analytics-info">
-                            <h3 class="box-tite fw-bold mb-3" style="border-bottom:2px solid orange;color:purple;">PERTUT OFFLINE</h3>
-                            <div class="row d-flex flex-row justify-content-between align-items-center">
-                                <div class="col-12 col-sm-8 fs-4" style="text-align: justify;">
-                                    Get one-on-one Tutorship By Our Professional Tutor  at Your Home. <br>
-                                    They will come  your home to teach you EVERYDAY (except Sunday) .
-                                    Take <strong>3 days </strong>trial.
-                                </div>
-                                <div class="col-12 col-sm-4 mt-3">
-                                    <button class="btn btn-primary d-flex ms-auto " type="button"  onclick="processPayment(event,2)">JOIN</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-<?php } ?>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="white-box analytics-info">
-                            <h3 class="box-tite fw-bold mb-3" style="border-bottom:2px solid orange;color:purple;">PERTUT Platform Test</h3>
-                            <div class="row d-flex flex-row justify-content-between align-items-center">
-                                <div class="col-12 col-sm-8 fs-4" style="text-align: justify;">
-                                   You can track your progress (FREE) and Tutor will get to know  your performance here.<br>
-                                   Weekly test and reward will be announce.
-                                   *FREE on after purchase of Pertut Online or Pertut Offline
-                                </div>
-                                <div class="col-12 col-sm-4 mt-3">
-                                    <button class="btn btn-primary d-flex ms-auto disabled" type="button">FREE</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <!-- ============================================================== -->
                 <!-- PRODUCTS YEARLY SALES -->
                 <!-- ============================================================== -->
@@ -383,8 +442,110 @@ if($_SESSION["type"] != '2'){
     </script>
     <!--End of Tawk.to Script-->
 
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="../scripts/paymentscript.js"></script>
+  <script>
+
+
+
+    $(document).ready(function () {
+    // Fetch teachers from the backend
+    $.ajax({
+        url: 'fetch_teachers.php', // Backend PHP script
+        method: 'POST',
+        data : {
+            fetch_teachers : "teachers"
+        },
+        dataType: 'json',
+        success: function (response) {
+            // Iterate over the teachers and add them to the container
+            teachers = response.teachers;
+            console.log(teachers);
+            i = 1;
+            teachers.forEach(function (teacher) {
+                // ${teacher.profile_picture}
+                gender = 'men';
+                if(teacher.gender == 'male'){
+                    gender = 'men';
+                }else{
+                    gender = 'women';
+                }
+                url = ''
+                if(teacher.profile_picture.trim() == ""){
+                    randomNumber = Math.floor(Math.random() * 100);
+                    url = `https://randomuser.me/api/portraits/${gender}/${randomNumber}.jpg`;
+                }else{
+                    url = `../userlogo/${teacher.profile_picture}`;
+                }
+                const teacherCard = `
+                    <div class="card-container" data-expertise="${teacher.expertise}" data-name="${teacher.name}">
+                        <img class="image" src="${url}" alt="${teacher.name}" />
+                        <h3>${teacher.name}</h3>
+                        <div class="rating">${generateStars(teacher.rating)}<span class='ms-2' style='color:#8c8888;'>(${teacher.cnt}+)</span></div>
+                        <h6>${teacher.expertise}</h6>
+                        <p>${teacher.bio}</p>
+                        <div class="details">
+                            <p><strong>Education:</strong> ${teacher.education}</p>
+                            <p><strong>Experience:</strong> ${teacher.experience} years</p>
+                        </div>
+                        <div class="buttons">
+                            <button class="primary" onclick="javascript:location.href='teacher.php?teacher_id=${teacher.teacher_id}&chat'">Chat</button>
+                            <?php  if($_SESSION["cat"] == "student") {
+                            ?>
+                            <button class="primary ghost" onclick="javascript:location.href='teacher.php?teacher_id=${teacher.teacher_id}&courses'">Courses</button>
+                            <?php } ?>
+                            <!-- <button class="primary ghost">Subscribe</button> -->
+                        </div>
+                    </div>`;
+                $('#teacher-container').append(teacherCard); // Append card to container
+            });
+        },
+        error: function (error) {
+            console.error('Error fetching teacher data:', error);
+        },
+    });
+
+    $.ajax({
+        url: 'fetch_teachers.php', // Backend PHP script
+        method: 'POST',
+        data : {
+            fetch_subjects : "subjects"
+        },
+        dataType: 'json',
+        success: function (response) {
+            subjects = response.html;
+            $('#subject-list').html(subjects);
+        },
+        error: function (error) {
+            console.error('Error fetching teacher data:', error);
+        },
+    });
+
+    // Function to generate star ratings
+    function generateStars(rating) {
+        let stars = '';
+        for (let i = 1; i <= 5; i++) {
+            stars += i <= Math.floor(rating) ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+        }
+        return stars;
+    }
+});
+
+function filter(){
+        const selectedCourse = $("#subject-list").val().toLowerCase();
+        const search_teacher = $("#search_teacher").val().toLowerCase();
+        $('.card-container').each(function () {
+            const expertise = $(this).data('expertise').toLowerCase();
+            const name = $(this).data('name').toLowerCase();
+
+            if ((expertise.includes(selectedCourse) || selectedCourse === "all")  && name.includes(search_teacher)) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+}
+filter();
+  </script>
 </body>
 
 </html>
