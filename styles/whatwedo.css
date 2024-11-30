@@ -6,7 +6,7 @@
     min-height: 50vh;
     width: 100%;
     position: relative;
-    background-image: url('../images2/image.jpg');
+    background-image: url('../images/image.jpg');
     background-size:     cover;                      /* <------ */
     background-repeat:   no-repeat;
     background-position: center center; 
