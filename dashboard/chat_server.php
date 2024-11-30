@@ -16,7 +16,7 @@ class Chat implements MessageComponentInterface {
         $this->clients = [];
 
         // Initialize Database connection
-        require require __DIR__ . '/../config.inc.php';
+        require __DIR__ . '/../config.inc.php';
         $this->ch_db = $db;  // Assuming $db is your PDO connection
     }
 
