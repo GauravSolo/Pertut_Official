@@ -6,3 +6,4 @@
         "post-install-cmd": "php dashboard/chat_server.php"
     }
 }
+
