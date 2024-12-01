@@ -229,7 +229,6 @@ if (isset($_POST['fetch_chat_participants']) && $_POST['fetch_chat_participants'
             WHERE sender_id = :teacher_id OR receiver_id = :teacher_id
         ");
         
-        // Bind the teacher's ID to the query
         $stmt->bindParam(':teacher_id', $teacher_id);
         
         // Execute the query
@@ -248,6 +247,7 @@ if (isset($_POST['fetch_chat_participants']) && $_POST['fetch_chat_participants'
                 // Fetch student details
                 $stmt = $db->prepare("SELECT Full_Name, Profile_Pic FROM students WHERE id = :participant_id");
             } else {
+                if($participantId == $teacher_id && $role == 'teacher') continue;
                 // Fetch teacher details
                 $stmt = $db->prepare("SELECT name AS Full_Name, profile_picture AS Profile_Pic FROM teachers WHERE teacher_id = :participant_id");
             }

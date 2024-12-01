@@ -424,6 +424,11 @@ function activeChat(e, id, role,logo,name) {
         conn.onmessage = function(e) {
             var data = JSON.parse(e.data);
             console.log("Received data", data);
+            if ($(".users").filter(`[data-id='${data}']`).length <= 0 && data.sender_id != sender_id) {
+                console.log("An element with the matching data-id not exists.");
+                fetchChatParticipants($('.users.active').attr("data-id"));
+                return;
+            }
             addMessage(data.sender_id, data.sender_logo, data.sender_name, data.timestamp, data.message_content);
         };
 
@@ -502,13 +507,15 @@ function toggleButton(event){
     $(".courses").toggle();
 }
 
-function fetchChatParticipants() {
+function fetchChatParticipants(active_user = -1) {
+    $('.participants').html(``);
     $.ajax({
         url: 'fetch_analytics.php', 
         type: 'POST',
         data: {
             fetch_chat_participants: 'data',
-            user_id: <?php echo $_SESSION["id"];  ?>
+            user_id: <?php echo $_SESSION["id"];  ?>,
+            user_role : "<?php echo $_SESSION["cat"];  ?>"
         },
         success: function(response) {
             const data = JSON.parse(response);
@@ -520,13 +527,16 @@ function fetchChatParticipants() {
                     let participantName = participant.name;
                     let participantImage = participant.avatar || 'https://bootdey.com/img/Content/avatar/avatar5.png'; 
                     let participantId = participant.participant_id;
-
+                    let active = (active_user == participantId)?'active':'';
+                    let badge = (active_user == participantId)?`
+                                <div class="badge bg-success float-right" style='position: absolute;right: 10%;top: 10px;border-radius:50%;padding:0.4em;'> </div>`:'';
                     let participantHTML = `
-                        <a href="#!" class="list-group-item list-group-item-action border-0 users" onclick="activeChat(event,${participantId},'${participant.role}','../userlogo/${participantImage}','${participantName}')" data-id="${participantId}" data-name="${participantName}" data-logo="../userlogo/${participantImage}" data-role="${participant.role}">
+                        <a href="#!" class="list-group-item list-group-item-action border-0 users ${active}" onclick="activeChat(event,${participantId},'${participant.role}','../userlogo/${participantImage}','${participantName}')" data-id="${participantId}" data-name="${participantName}" data-logo="../userlogo/${participantImage}" data-role="${participant.role}">
                             <div class="d-flex align-items-center">
                                 <img src="../userlogo/${participantImage}" class="rounded-circle mr-1" alt="${participantName}" width="40" height="40">
                                 <div class="flex-grow-1 ms-3 d-flex align-items-center">
                                     ${participantName}
+                                    ${badage}
                                     <!-- <div class="small"><span class="fas fa-circle chat-offline">Offline</span></div> -->
                                 </div>
                             </div>
@@ -599,7 +609,7 @@ function addMessage(sender_id,senderImage,senderName,timestamp,messageContent){
                     <div class="text-muted small text-nowrap mt-2">${timestamp.split(" ")[0]+"<br>"+timestamp.split(" ")[1]}</div>
                 </div>
                 <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                    <div class="font-weight-bold mb-1">${senderName}</div>
+                    <div class="font-weight-bold mb-1"  style='font-style:italic;'>${senderName}</div>
                     ${messageContent}
                 </div>
             </div>
@@ -612,7 +622,7 @@ function addMessage(sender_id,senderImage,senderName,timestamp,messageContent){
                     <div class="text-muted small text-nowrap mt-2">${timestamp.split(" ")[0]+"<br>"+timestamp.split(" ")[1]}</div>
                 </div>
                 <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                    <div class="font-weight-bold mb-1">${senderName}</div>
+                    <div class="font-weight-bold mb-1"  style='font-style:italic;'>${senderName}</div>
                     ${messageContent}
                 </div>
             </div>

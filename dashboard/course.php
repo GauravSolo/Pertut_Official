@@ -360,18 +360,68 @@ button.primary.ghost {
                                  $is_batch_after_now = 0;
                              }
                             ?>
-                            <div class="col-9 px-3 live-course">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <h4 class="page-title"  style="border-bottom: 1px solid;font-weight:bold;color:orange;">Live Class</h4>
-                                    </div>
-                                    <div class="col d-flex flex-wrap" style="gap:1rem; min-height:50vh;">
-                                        <?php echo $is_batch_after_now==1?"active":"closed";  ?>
-                                    </div>
+                            <div class="col-12 px-3 live-course">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h4 class="page-title" style="border-bottom: 1px solid; font-weight: bold; color: orange;">Live Class</h4>
+                                </div>
+                                <div class="col d-flex flex-wrap wrapper" style="gap: 1rem; min-height: 50vh;">
+                                    <iframe id="liveclass" src="https://petut.digitalsamba.com/demo-room" class="w-100" title="Demo Room" allow="camera; microphone;"></iframe>
                                 </div>
                             </div>
+                            <!-- Button to trigger expansion -->
+                            <button id="expand-btn" class="btn btn-primary mt-3">Expand</button>
+                        </div>
+                        
+                        <!-- JavaScript to handle the expansion -->
+                        <script>
+                            document.getElementById('expand-btn').addEventListener('click', function() {
+                                const wrapper = document.querySelector('.wrapper');
+                                const iframe = wrapper.querySelector('iframe');
+                        
+                                // Set the wrapper to full screen
+                                wrapper.style.position = 'fixed';
+                                wrapper.style.top = '0';
+                                wrapper.style.left = '0';
+                                wrapper.style.width = '100vw'; // Full width of the viewport
+                                wrapper.style.height = '100vh'; // Full height of the viewport
+                                wrapper.style.zIndex = '9999'; // Make sure it's on top
+                                wrapper.style.transition = 'all 0.5s ease'; // Smooth transition for resizing
+                        
+                                // Ensure iframe takes full width and height of the wrapper
+                                iframe.style.width = '100%';
+                                iframe.style.height = '100%';
+                                                            // Optional: If you want to add a close button or allow closing
+                                const closeButton = document.createElement('button');
+                                closeButton.innerHTML = 'X';
+                                closeButton.style.position = 'absolute';
+                                closeButton.style.top = '10px';
+                                closeButton.style.right = '10px';
+                                closeButton.style.width = '30px';
+                                closeButton.style.height = '30px';
+                                closeButton.style.backgroundColor = 'chocolate';
+                                closeButton.style.color = 'white';
+                                closeButton.style.border = 'none';
+                                closeButton.style.cursor = 'pointer';
+                        
+                                closeButton.addEventListener('click', function() {
+                                    wrapper.style.position = 'relative'; // Reset to original position
+                                    wrapper.style.width = '100%'; // Reset width
+                                    wrapper.style.height = 'auto'; // Reset height
+                                    iframe.style.width = '100%';
+                                    iframe.style.height = 'auto';
+                                    closeButton.remove(); // Remove the close button
+                                });
+                        
+                                wrapper.appendChild(closeButton);
+                            });
+
+                           
+
+                        </script>
+                        
                             
-                            <div class="col-3 px-3 chat">
+                            <!-- <div class="col-3 px-3 chat">
                                 <div class="row">
                                 <div class="col-12">
                                         <h4 class="page-title" style="border-bottom: 1px solid;font-weight:bold;color:orange;">Live Chat</h4>
@@ -380,7 +430,7 @@ button.primary.ghost {
                                         chat
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             
 
 
@@ -405,6 +455,18 @@ button.primary.ghost {
     <script src="js/custom.js"></script>
 </body>
 <script>
+ $(document).ready(function() {
+                                // Get the iframe element
+                                var iframe = $('#liveclass'); // Replace with the actual ID of your iframe
 
+                                // Wait for the iframe to load fully
+                                iframe.on('load', function() {
+                                    // Access the iframe's document after it is loaded
+                                    var iframeDoc = iframe[0].contentDocument || iframe[0].contentWindow.document;
+                                    console.log("dfd "+$(iframeDoc).find("input[name='search']"));
+                                    // Find the input field inside the iframe and set its value
+                                    $(iframeDoc).find("input[name='search']").val("<?php echo $_SESSION["fullname"];  ?>");
+                                });
+                            });
 </script>
 </html>

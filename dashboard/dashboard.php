@@ -488,7 +488,8 @@ button.primary:hover{
                             <p><strong>Experience:</strong> ${teacher.experience} years</p>
                         </div>
                         <div class="buttons">
-                            <button class="primary" onclick="javascript:location.href='teacher.php?teacher_id=${teacher.teacher_id}&chat'">Chat</button>
+                            ${teacher.teacher_id != <?php echo $_SESSION["id"]; ?> ? `
+                            <button class="primary" onclick="javascript:location.href='teacher.php?teacher_id=${teacher.teacher_id}&chat'">Chat</button>` : ''}
                             <?php  if($_SESSION["cat"] == "student") {
                             ?>
                             <button class="primary ghost" onclick="javascript:location.href='teacher.php?teacher_id=${teacher.teacher_id}&courses'">Courses</button>

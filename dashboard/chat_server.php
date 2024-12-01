@@ -16,7 +16,7 @@ class Chat implements MessageComponentInterface {
         $this->clients = [];
 
         // Initialize Database connection
-        require __DIR__ . '/../config.inc.php';
+        require dirname(__DIR__) . '/config.inc.php';
         $this->ch_db = $db;  // Assuming $db is your PDO connection
     }
 
@@ -53,22 +53,21 @@ class Chat implements MessageComponentInterface {
             }
         }
     }
-
     public function onMessage(ConnectionInterface $from, $msg) {
         echo "Message received: $msg\n";
         $data = json_decode($msg, true);
-
+    
         if (isset($data['sender_id']) && isset($data['receiver_id']) && isset($data['message_content'])) {
             $sender_id = $data['sender_id'];
             $receiver_id = $data['receiver_id'];
             $message_content = $data['message_content'];
             $message_type = isset($data['message_type']) ? $data['message_type'] : 'text';
-            $attachment_url = isset($data['attachment_url']) ? $data['attachment_url'] : NULL;
-
+            $attachment_url = isset($data['attachment_url']) ? $data['attachment_url'] : null;
+    
             // Insert the message into the database
             $stmt = $this->ch_db->prepare("INSERT INTO messages (sender_id, receiver_id, sender_role, receiver_role, message_content, message_type, attachment_url) 
                 VALUES (:sender_id, :receiver_id, :sender_role, :receiver_role, :message_content, :message_type, :attachment_url)");
-
+    
             $stmt->bindParam(':sender_id', $sender_id);
             $stmt->bindParam(':receiver_id', $receiver_id);
             $stmt->bindParam(':sender_role', $data['sender_role']);
@@ -77,42 +76,65 @@ class Chat implements MessageComponentInterface {
             $stmt->bindParam(':message_type', $message_type);
             $stmt->bindParam(':attachment_url', $attachment_url);
             $stmt->execute();
-
+    
             // Add timestamp
             $data['timestamp'] = date("Y-m-d H:i:s");
-
-            // Construct the channel identifier
-            $channel = "chat_{$sender_id}_{$receiver_id}";
-            echo "current channel ".$channel.' - '.isset($this->clients[$channel]);
-            
-            if (isset($this->clients[$channel])) {
-                foreach ($this->clients[$channel] as $client) {
-                    $client->send(json_encode($data));  // Send the message to the client in that chat room
+    
+            // Send the message to the receiver if their connection exists
+            $receiverFound = false;
+    
+            foreach ($this->clients as $channel => $clientConnections) {
+                // Extract sender_id and receiver_id from the channel name
+                if (preg_match('/^chat_(\d+)_(\d+)$/', $channel, $matches)) {
+                    $channelSender = $matches[1];
+                    $channelReceiver = $matches[2];
+    
+                    // Check if the receiver_id matches the intended receiver
+                    if ($channelReceiver == $receiver_id) {
+                        $receiverFound = true;
+                        foreach ($clientConnections as $client) {
+                            $client->send(json_encode($data)); // Send the message to the receiver
+                        }
+                    }
                 }
             }
+    
+            // Notify the sender if the receiver is not connected
+            if (!$receiverFound) {
+                $from->send(json_encode([
+                    'status' => 'Receiver not connected, message stored for later delivery.',
+                    'message' => $data
+                ]));
+            }
+    
+            // Send the message back to the sender (optional if needed for acknowledgment)
             $from->send(json_encode($data));
         } else {
             // Invalid message format
             $from->send(json_encode(['error' => 'Invalid message format']));
         }
     }
-
+    
     public function onError(ConnectionInterface $conn, \Exception $e) {
         echo "Error: {$e->getMessage()}\n";
         $conn->close();
     }
 }
 
-// Start the WebSocket server
-$server = IoServer::factory(
-    new HttpServer(
-        new WsServer(
-            new Chat()
-        )
-    ),
-    8080
-);
+try {
+    $server = IoServer::factory(
+        new HttpServer(
+            new WsServer(
+                new Chat()
+            )
+        ),
+        8080
+    );
 
-echo "WebSocket server running at ws://localhost:8080\n";
-$server->run();
+    echo "WebSocket server running at ws://localhost:8080\n";
+    $server->run();
+} catch (Exception $e) {
+    echo "Error starting WebSocket server: {$e->getMessage()}\n";
+    exit(1);
+}
 ?>

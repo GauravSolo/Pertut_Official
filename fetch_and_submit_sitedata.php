@@ -263,72 +263,90 @@ if(isset($_POST["checkCredentials"]) && $_POST["checkCredentials"] == "user"){
     die();
 
 }
+
+
+
 if (isset($_POST["submit"]) && $_POST["submit"] == "submit") {
 
-    // Sanitize and validate inputs
     $fullname = $_POST["fullname"];
     $phonenumber = $_POST["phonenumber"];
     $email = $_POST["email"];
-    // $gender = $_POST["gender"];
     $category = $_POST["category"];
     $gender = "male";
     $username = $_POST["username"];
     $password = $_POST["enteredpass"];
     $inputState = $_POST["inputState"];
     $inputDistrict = $_POST["inputDistrict"];
-
-    
     $experience = $_POST["experience"];
-    // $monthly_rate = $_POST["monthly_rate"];
     $bio = $_POST["bio"];
     $education = $_POST["education"];
     $subjects = $_POST["subjects"];
 
-    // Handle profile picture upload
-    $profilePic = "";  // Default image
-
+    $profilePic = ""; // Default image
     if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] == 0) {
         $uploadedFile = $_FILES['profile_picture'];
         $targetDir = "userlogo/";
         $fileExtension = strtolower(pathinfo($uploadedFile['name'], PATHINFO_EXTENSION));
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
 
-        // Validate file extension
         if (in_array($fileExtension, $allowedExtensions)) {
-            // Generate unique file name
             $profilePic = uniqid('profile_') . '.' . $fileExtension;
             $targetFile = $targetDir . $profilePic;
-            
-            // Move the uploaded file to the server directory
-            if (move_uploaded_file($uploadedFile['tmp_name'], $targetFile)) {
-                // Successfully uploaded
-            }
+            move_uploaded_file($uploadedFile['tmp_name'], $targetFile);
         }
     }
 
     $timestamp = date("Y-m-d H:i:s");
 
-    $query = "INSERT INTO students(`Full_Name`, Email, Phone_Number, `Username`, `Password`, Gender, `State`, `City`, `Profile_Pic`, `Timestamp`)
-              VALUES('$fullname', '$email', '$phonenumber', '$username', '$password', '$gender', '$inputState', '$inputDistrict', '$profilePic', '$timestamp')";
-    
-    if($category == "teacher"){
-        $query = "INSERT INTO teachers(`name`, email, phone, `t_username`, `password_hash`, gender,experience,bio,education,expertise,`profile_picture`, `created_at`)
-              VALUES('$fullname', '$email', '$phonenumber', '$username', '$password', '$gender','$experience','$bio','$education','$subjects','$profilePic', '$timestamp')";
+    $table = ($category == "teacher") ? "teachers" : "students";
+    $idColumn = ($category == "teacher") ? "teacher_id" : "Id";
+
+    $stmt = $db->prepare("SELECT MAX($idColumn) AS max_id FROM $table");
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $nextId = ($row['max_id'] ?? 0) + 2; 
+
+    if ($category == "teacher") {
+        $query = "INSERT INTO teachers(`teacher_id`, `name`, email, phone, `t_username`, `password_hash`, gender, experience, bio, education, expertise, `profile_picture`, `created_at`)
+                  VALUES(:id, :name, :email, :phone, :username, :password, :gender, :experience, :bio, :education, :subjects, :profilePic, :timestamp)";
+    } else {
+        $query = "INSERT INTO students(`Id`, `Full_Name`, Email, Phone_Number, `Username`, `Password`, Gender, `State`, `City`, `Profile_Pic`, `Timestamp`)
+                  VALUES(:id, :name, :email, :phone, :username, :password, :gender, :state, :city, :profilePic, :timestamp)";
     }
-    echo $query;
+
     $stmt = $db->prepare($query);
+    $stmt->bindParam(':id', $nextId);
+    $stmt->bindParam(':name', $fullname);
+    $stmt->bindParam(':email', $email);
+    $stmt->bindParam(':phone', $phonenumber);
+    $stmt->bindParam(':username', $username);
+    $stmt->bindParam(':password', $password);
+    $stmt->bindParam(':gender', $gender);
+    $stmt->bindParam(':profilePic', $profilePic);
+    $stmt->bindParam(':timestamp', $timestamp);
+
+    if ($category == "teacher") {
+        $stmt->bindParam(':experience', $experience);
+        $stmt->bindParam(':bio', $bio);
+        $stmt->bindParam(':education', $education);
+        $stmt->bindParam(':subjects', $subjects);
+    } else {
+        $stmt->bindParam(':state', $inputState);
+        $stmt->bindParam(':city', $inputDistrict);
+    }
 
     try {
         $stmt->execute();
-        $error = 0;
+        $error = 0; // Success
     } catch (\Throwable $th) {
-        $error = 1;
+        $error = 1; // Failure
     }
 
     echo json_encode(array("res" => $error));
     $db = null;
     die();
 }
+
 
 
 if(isset($_POST["saveEmail"]) && $_POST["saveEmail"] == "email"){

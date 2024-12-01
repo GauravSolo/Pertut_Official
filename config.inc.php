@@ -1,25 +1,25 @@
 <?php
-if (file_exists(__DIR__ . '/.env')) {
-  require_once __DIR__ . '/vendor/autoload.php';
-  $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+// if (file_exists(__DIR__ . '/.env')) {
+//   require_once __DIR__ . '/vendor/autoload.php';
+//   $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
   
-  $dotenv->load();
+//   $dotenv->load();
   
-  putenv("DBNAME=" . $_ENV['DBNAME']);
-  putenv("DBUSER=" . $_ENV['DBUSER']);
-  putenv("DBPASS=" . $_ENV['DBPASS']);
-  putenv("DBHOST=" . $_ENV['DBHOST']);
-}
+//   putenv("DBNAME=" . $_ENV['DBNAME']);
+//   putenv("DBUSER=" . $_ENV['DBUSER']);
+//   putenv("DBPASS=" . $_ENV['DBPASS']);
+//   putenv("DBHOST=" . $_ENV['DBHOST']);
+// }
 
 
 date_default_timezone_set('Asia/Kolkata');
 session_start();
 
-define('DBNAME', getenv('DBNAME'));
-define('DBUSER', getenv('DBUSER'));
-define('DBPASS', getenv('DBPASS'));
-define('DBHOST', getenv('DBHOST'));
-
+// define('DBNAME', 'pertut');
+// define('DBUSER', 'root');
+// define('DBPASS', '');
+// define('DBHOST', 'localhost');
+$db = null;
 try {
     $db = new PDO("mysql:host=" . DBHOST . ";dbname=" . DBNAME, DBUSER, DBPASS);
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

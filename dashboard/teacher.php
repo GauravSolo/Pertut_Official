@@ -671,7 +671,7 @@ if(sender_id == <?php echo $_SESSION["id"]; ?>) {
                 <div class="text-muted small text-nowrap mt-2">${timestamp.split(" ")[0]+"<br>"+timestamp.split(" ")[1]}</div>
             </div>
             <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                <div class="font-weight-bold mb-1">${senderName}</div>
+                <div class="font-weight-bold mb-1" style='font-style:italic;'>${senderName}</div>
                 ${messageContent}
             </div>
         </div>
@@ -684,7 +684,7 @@ if(sender_id == <?php echo $_SESSION["id"]; ?>) {
                 <div class="text-muted small text-nowrap mt-2">${timestamp.split(" ")[0]+"<br>"+timestamp.split(" ")[1]}</div>
             </div>
             <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                <div class="font-weight-bold mb-1">${senderName}</div>
+                <div class="font-weight-bold mb-1" style='font-style:italic;'>${senderName}</div>
                 ${messageContent}
             </div>
         </div>
