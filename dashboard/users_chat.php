@@ -213,6 +213,9 @@ button.primary.ghost {
 .border-right{
     border-right: 1px solid #ccc;
 }
+.list-group-item:hover{
+    cursor :pointer;
+}
    </style>
 </head>
 
@@ -420,17 +423,34 @@ function activeChat(e, id, role,logo,name) {
         conn.onopen = function() {
             console.log("Connected to chat server for teacher-student chat.");
         };
-
         conn.onmessage = function(e) {
             var data = JSON.parse(e.data);
             console.log("Received data", data);
-            if ($(".users").filter(`[data-id='${data}']`).length <= 0 && data.sender_id != sender_id) {
-                console.log("An element with the matching data-id not exists.");
-                fetchChatParticipants($('.users.active').attr("data-id"));
+
+            // Add the received message only if the sender is the current user or is a participant
+            if (data.sender_id == $(".users.active").attr('data-id') || data.receiver_id == $(".users.active").attr('data-id') || data.sender_id == <?php echo $teacher_id; ?>) { // Don't add the message to the current user's chat
+                addMessage(
+                    data.sender_id,
+                    data.sender_logo,
+                    data.sender_name,
+                    data.timestamp,
+                    data.message_content
+                );
                 return;
             }
-            addMessage(data.sender_id, data.sender_logo, data.sender_name, data.timestamp, data.message_content);
+            // Check if the message sender is the current user or already part of the chat participants
+            if (
+                $(".users").filter(`[data-id='${data.sender_id}']`).length <= 0 ||  // If no matching user element exists
+                data.sender_id != sender_id // And the sender is not the current user
+            ) {
+                console.log("An element with the matching data-id does not exist.");
+                fetchChatParticipants($('.users.active').attr("data-id"),data.sender_id);
+                return;
+            }
+
         };
+
+
 
         conn.onerror = function(err) {
             console.log("Error in WebSocket connection:", err);
@@ -507,7 +527,7 @@ function toggleButton(event){
     $(".courses").toggle();
 }
 
-function fetchChatParticipants(active_user = -1) {
+function fetchChatParticipants(active_user = -1,sender_id=-1) {
     $('.participants').html(``);
     $.ajax({
         url: 'fetch_analytics.php', 
@@ -528,15 +548,16 @@ function fetchChatParticipants(active_user = -1) {
                     let participantImage = participant.avatar || 'https://bootdey.com/img/Content/avatar/avatar5.png'; 
                     let participantId = participant.participant_id;
                     let active = (active_user == participantId)?'active':'';
-                    let badge = (active_user == participantId)?`
+                    let badge = (sender_id == participantId)?`
                                 <div class="badge bg-success float-right" style='position: absolute;right: 10%;top: 10px;border-radius:50%;padding:0.4em;'> </div>`:'';
-                    let participantHTML = `
-                        <a href="#!" class="list-group-item list-group-item-action border-0 users ${active}" onclick="activeChat(event,${participantId},'${participant.role}','../userlogo/${participantImage}','${participantName}')" data-id="${participantId}" data-name="${participantName}" data-logo="../userlogo/${participantImage}" data-role="${participant.role}">
-                            <div class="d-flex align-items-center">
+
+
+                    let participantHTML = `<a #!" class="list-group-item list-group-item-action border-0 users ${active}" onclick="activeChat(event,${participantId},'${participant.role}','../userlogo/${participantImage}','${participantName}')" data-id="${participantId}" data-name="${participantName}" data-logo="../userlogo/${participantImage}" data-role="${participant.role}">
+                            <div class="d-flex align-items-center" ${(sender_id == participantId)?"onclick='removeBadge(event)'":''}>
                                 <img src="../userlogo/${participantImage}" class="rounded-circle mr-1" alt="${participantName}" width="40" height="40">
                                 <div class="flex-grow-1 ms-3 d-flex align-items-center">
                                     ${participantName}
-                                    ${badage}
+                                    ${badge}
                                     <!-- <div class="small"><span class="fas fa-circle chat-offline">Offline</span></div> -->
                                 </div>
                             </div>
@@ -597,7 +618,6 @@ function fetchChatHistory(rec_id, rec_role) {
     });
 }
 
-
 function addMessage(sender_id,senderImage,senderName,timestamp,messageContent){
 
     let messageHTML = '';
@@ -633,5 +653,10 @@ function addMessage(sender_id,senderImage,senderName,timestamp,messageContent){
     chatContainer = document.querySelector('.chat-messages');
     chatContainer.scrollTop = chatContainer.scrollHeight;
 }
+
+function removeBadge(e){
+    $(e.target).find('.badge').remove();
+}
+
 </script>
 </html>

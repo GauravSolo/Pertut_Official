@@ -1,8 +1,8 @@
 <?php
 
 
-// ini_set("display_errors",1);
-// error_reporting(E_ALL);
+ini_set("display_errors",1);
+error_reporting(E_ALL);
 
 include "config.inc.php";
 
@@ -313,6 +313,7 @@ if (isset($_POST["submit"]) && $_POST["submit"] == "submit") {
         $query = "INSERT INTO students(`Id`, `Full_Name`, Email, Phone_Number, `Username`, `Password`, Gender, `State`, `City`, `Profile_Pic`, `Timestamp`)
                   VALUES(:id, :name, :email, :phone, :username, :password, :gender, :state, :city, :profilePic, :timestamp)";
     }
+    
 
     $stmt = $db->prepare($query);
     $stmt->bindParam(':id', $nextId);
@@ -340,6 +341,7 @@ if (isset($_POST["submit"]) && $_POST["submit"] == "submit") {
         $error = 0; // Success
     } catch (\Throwable $th) {
         $error = 1; // Failure
+        echo $th->getmessage();
     }
 
     echo json_encode(array("res" => $error));

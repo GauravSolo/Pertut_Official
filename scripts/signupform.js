@@ -24,19 +24,35 @@ $("#user").add("#pass").on("keypress",function(e){
     }
 });
 
+// Define debounce function
+function debounce(func, delay) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer); // Clear the previous timer
+        timer = setTimeout(() => {
+            func.apply(this, args); // Call the original function after the delay
+        }, delay);
+    };
+}
 
-$("#username").on("input",function(){
-    username = $("#username").val().trim();
-    phone = $("#phonenumber").val().trim();
-    category = $("#category option:selected").val().trim();
+function handleUsernameInput() {
+    const username = $("#username").val().trim();
+    const phone = $("#phonenumber").val().trim();
+    const category = $("#category option:selected").val().trim();
     $(".warningmsg").remove();
-    if(username != ""){
-        checkUsername(username,phone,category);
-    }else{
+
+    if (username !== "") {
+        checkUsername(username, phone, category);
+    } else {
         $("#username").parent().append(`<span class="d-inline-block w-100 text-center warningmsg text-danger">Not Available</span>`);
-    }   
-    console.log("dfdd");
-    });
+    }
+    console.log("Input handled");
+}
+
+const debouncedHandleUsernameInput = debounce(handleUsernameInput, 300);
+
+$("#username").on("input", debouncedHandleUsernameInput);
+
     
     $("#phonenumber").on("input",function(){
     phone = $(this).val().trim();

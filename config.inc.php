@@ -15,10 +15,15 @@
 date_default_timezone_set('Asia/Kolkata');
 session_start();
 
-// define('DBNAME', 'pertut');
-// define('DBUSER', 'root');
-// define('DBPASS', '');
-// define('DBHOST', 'localhost');
+// define('DBNAME', 'b0przwsvp6iwcuhxgemq');
+// define('DBUSER', 'ubosbrgnn4o0wpov');
+// define('DBPASS', 'l1feG6PmkXJQjHmIkwKE');
+// define('DBHOST', 'b0przwsvp6iwcuhxgemq-mysql.services.clever-cloud.com');
+
+define('DBNAME', 'pertut');
+define('DBUSER', 'root');
+define('DBPASS', '');
+define('DBHOST', 'localhost');
 $db = null;
 try {
     $db = new PDO("mysql:host=" . DBHOST . ";dbname=" . DBNAME, DBUSER, DBPASS);

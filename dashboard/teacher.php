@@ -69,7 +69,6 @@ if(isset($_SESSION['id'])  && isset($_GET['teacher_id'])){
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
     width: 220px;
-    height: 250px;
     /* margin: 0.5rem; */
     /* margin-inline:auto; */
 }

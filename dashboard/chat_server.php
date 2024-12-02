@@ -107,8 +107,11 @@ class Chat implements MessageComponentInterface {
                 ]));
             }
     
-            // Send the message back to the sender (optional if needed for acknowledgment)
+            // Send the message back to the sender (optional: only for acknowledgment)
+            // You can decide whether to send it back to the sender based on your use case
+            // if ($sender_id != $from->getId()) {
             $from->send(json_encode($data));
+            // }
         } else {
             // Invalid message format
             $from->send(json_encode(['error' => 'Invalid message format']));

@@ -1,8 +1,25 @@
 <?php
-                                include "../config.inc.php";
+ini_set("display_errors",1);
+error_reporting(E_ALL);
+include "../config.inc.php";
+$teacher = array();
+$teacher_id = $_SESSION['id'];
+$student_id = "";
+$course_id = "";
+
+$teacher = array();
 
 if(isset($_SESSION['id'])){
-
+    $query = "SELECT * FROM teachers WHERE teacher_id = '$teacher_id'";
+    $error = 0;
+    try {
+        $st = $db->prepare($query);
+        $st->execute();
+        if($st->rowCount() <= 0) header("Location:dashboard.php");
+        $teacher = $st->fetch(PDO::FETCH_ASSOC);
+    } catch (Throwable $th) {
+        $error = 1; 
+    }
 }else{
   header("Location:../index.php");
 }
@@ -27,8 +44,7 @@ if(isset($_SESSION['id'])){
     <!-- Custom CSS -->
    <link href="css/style.min.css" rel="stylesheet">
    <style>
-           
-           .logoname{
+             .logoname{
        display:block;
  }
  .logoimage{
@@ -56,6 +72,7 @@ if(isset($_SESSION['id'])){
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
     width: 220px;
+    height: 250px;
     /* margin: 0.5rem; */
     /* margin-inline:auto; */
 }
@@ -80,9 +97,8 @@ if(isset($_SESSION['id'])){
 .card-container {
 	background-color: ##e1e7ec;
 	border-radius: 5px;
-	box-shadow: 0px 10px 20px -10px rgba(0,0,0,0.75);
+	/* box-shadow: 0px 10px 20px -10px rgba(0,0,0,0.75); */
 	color: #6f7282;
-	padding-top: 20px;
 	position: relative;
 	width: 350px;
 	max-width: 100%;
@@ -109,6 +125,7 @@ if(isset($_SESSION['id'])){
 	border: 1px solid #03BFCB;
 	border-radius: 50%;
 	padding: 7px;
+    width:50px;
 }
 
 .rating{
@@ -175,10 +192,10 @@ button.primary.ghost {
 /* Optional: Styling for individual teacher cards */
 .card-container {
     background: #fff;
-    border: 1px solid #ddd;
+    /* border: 1px solid #ddd; */
     border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding-bottom: 10px;
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
 }
 
 .course-card {
@@ -210,12 +227,7 @@ button.primary.ghost {
 .course-card button:hover {
     background-color: #0056b3;
 }
-.image {
-	border: 1px solid #03BFCB;
-	border-radius: 50%;
-	padding: 7px;
-    width:50px;
-}
+
    </style>
 </head>
 
@@ -293,151 +305,97 @@ button.primary.ghost {
         <!-- ============================================================== -->
         <!-- Page wrapper  -->
         <!-- ============================================================== -->
-        <div class="page-wrapper" style="min-height: 250px;">
-            <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <div class="page-breadcrumb bg-white">
-                <div class="row align-items-center">
-                    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                        <h4 class="page-title">Packages</h4>
-                    </div>
-                </div>
-                <!-- /.col-lg-12 -->
-            </div>
-            <!-- ============================================================== -->
-            <!-- End Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- Container fluid  -->
-            <!-- ============================================================== -->
+        <div class="page-wrapper">
+            
             <div class="container-fluid">
-                <!-- ============================================================== -->
-                <!-- Start Page Content -->
-                <!-- ============================================================== -->
                 <div class="row">
-                   <div class="col-12  mx-auto my-2" id="msg"></div>
-                        <div class="white-box">
-                            
-                            <?php
-
-                                $student_id = $_SESSION['id'];
-
-                                $course_query = "
-                                SELECT c.*, 
-                                    CASE 
-                                        WHEN e.student_id IS NOT NULL THEN 1
-                                        ELSE 0
-                                    END AS is_enrolled,
-                                    t.name,
-                                    t.profile_picture,
-                                    t.gender
-                                FROM courses c
-                                LEFT JOIN enrollments e 
-                                ON c.course_id = e.course_id  AND e.student_id = '".$student_id."' LEFT JOIN teachers t ON c.teacher_id = t.teacher_id 
-                                WHERE e.status = 1";
-                                
-                                $error = 0;
-                                $courses = array();
-                                try {
-                                    $st = $db->prepare($course_query);
-                                    $st->execute();
-                                    $courses = $st->fetchAll(PDO::FETCH_ASSOC);
-                                } catch (Throwable $th) {
-                                    $error = 1;
-                                }
-                            ?>
-                   <div class="col-12 px-3 courses">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <h4 class="page-title" style="border-bottom: 1px solid;font-weight:bold;color:orange;">Courses</h4>
-                                    </div>
-                                    <div class="col d-flex flex-wrap" style="gap:1rem;">
-                                        <?php 
-                                        if(empty($courses)){
-                                        ?>
-                                        <div class="d-flex flex-column align-items-center justify-content-center w-100">
-                                            <h3 class="box-title text-center">No Package</h3>
-                                            <h3 class="box-title text-center text-info" style="cursor: pointer;" onclick="javascript:window.location.href='dashboard.php'">Click Here to Select Package</h3>
-                                        </div>
-                                        <?php
-                                        }
-                                            foreach($courses as $course){
-                                        ?>
-                                        <div class="card">
-                                                    <div class="d-flex flex-column align-items-center">
-                                                    <?php
-                                                        $gender = 'men';
-                                                        if($course["gender"] == 'male'){
-                                                            $gender = 'men';
-                                                        }else{
-                                                            $gender = 'women';
-                                                        }
-                                                        $url = '';
-                                                        if(trim($course["profile_picture"]) == ""){
-                                                            $randomNumber = rand(0, 99);
-                                                            $url = "https://randomuser.me/api/portraits/$gender/$randomNumber.jpg";
-                                                        }else{
-                                                            $url = "../userlogo/".$course["profile_picture"];
-                                                        }
-                                                        ?>
-                                                        <img class="image" src="<?php echo $url; ?>"  />
-                                                        <h4 class="ms-3 fw-bold"><?php echo $course['name']; ?></h4>
-                                                    </div>
-                                            <h4 class="fw-bold mb-0">Course : <?php echo $course['course_name']; ?></h4>
-                                            <h4 class="fw-bold">Code : <?php echo $course['course_code']; ?></h4>
-                                            <p><?php echo $course['course_description']; ?></p>
-                                            <p class="mt-auto"><strong>Duration:</strong> <?php echo $course['course_duration']; ?> months</p>
-                                            <?php if ($course['is_enrolled']) { ?>
-                                                <button class="primary" onclick="javascript:location.href='course.php?teacher_id=<?php echo $course['teacher_id']; ?>&course_id=<?php echo $course['course_id']; ?>'">Go to Course</button>
-                                            <?php } else { ?>
-                                                <button class="primary" onclick="processPayment(event,<?php echo $course['course_id']; ?>,<?php echo $course['teacher_id']; ?>,<?php echo $course['monthly_rate']; ?>)">Enroll</button>
-                                            <?php } ?>
-                                        </div>
-                                        <?php
-                                            }
-                                        ?>
-                                    </div>
+                   <div class="col-12  mx-auto mb-1" id="msg">
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="white-box d-flex ">
+                            <div class="col-12 px-3 live-course">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h4 class="page-title" style="border-bottom: 1px solid; font-weight: bold; color: orange;">Live Class</h4>
+                                </div>
+                                <div class="col d-flex flex-wrap wrapper" style="gap: 1rem; min-height: 50vh;">
+                                    <iframe id="liveclass" src="https://petut.digitalsamba.com/demo-room" class="w-100" title="Demo Room" allow="camera; microphone;"></iframe>
                                 </div>
                             </div>
+                            <!-- Button to trigger expansion -->
+                            <button id="expand-btn" class="btn btn-primary mt-3">Expand</button>
+                        </div>
+                        
+                        <!-- JavaScript to handle the expansion -->
+                        <script>
+                            document.getElementById('expand-btn').addEventListener('click', function() {
+                                const wrapper = document.querySelector('.wrapper');
+                                const iframe = wrapper.querySelector('iframe');
+                        
+                                // Set the wrapper to full screen
+                                wrapper.style.position = 'fixed';
+                                wrapper.style.top = '0';
+                                wrapper.style.left = '0';
+                                wrapper.style.width = '100vw'; // Full width of the viewport
+                                wrapper.style.height = '100vh'; // Full height of the viewport
+                                wrapper.style.zIndex = '9999'; // Make sure it's on top
+                                wrapper.style.transition = 'all 0.5s ease'; // Smooth transition for resizing
+                        
+                                // Ensure iframe takes full width and height of the wrapper
+                                iframe.style.width = '100%';
+                                iframe.style.height = '100%';
+                                                            // Optional: If you want to add a close button or allow closing
+                                const closeButton = document.createElement('button');
+                                closeButton.innerHTML = 'X';
+                                closeButton.style.position = 'absolute';
+                                closeButton.style.top = '10px';
+                                closeButton.style.right = '10px';
+                                closeButton.style.width = '30px';
+                                closeButton.style.height = '30px';
+                                closeButton.style.backgroundColor = 'chocolate';
+                                closeButton.style.color = 'white';
+                                closeButton.style.border = 'none';
+                                closeButton.style.cursor = 'pointer';
+                        
+                                closeButton.addEventListener('click', function() {
+                                    wrapper.style.position = 'relative'; // Reset to original position
+                                    wrapper.style.width = '100%'; // Reset width
+                                    wrapper.style.height = 'auto'; // Reset height
+                                    iframe.style.width = '100%';
+                                    iframe.style.height = 'auto';
+                                    closeButton.remove(); // Remove the close button
+                                });
+                        
+                                wrapper.appendChild(closeButton);
+                            });
 
-                            </div>
+                           
 
+                        </script>
+                        
+                            
+                            <!-- <div class="col-3 px-3 chat">
+                                <div class="row">
+                                <div class="col-12">
+                                        <h4 class="page-title" style="border-bottom: 1px solid;font-weight:bold;color:orange;">Live Chat</h4>
+                                    </div>
+                                    <div class="col d-flex flex-wrap" style="gap:1rem;">
+                                        chat
+                                    </div>
+                                </div>
+                            </div> -->
+                            
+
+
+                        </div>
                     </div>
-                <!-- ============================================================== -->
-                <!-- End PAge Content -->
-                <!-- ============================================================== -->
-                <!-- ============================================================== -->
-                <!-- Right sidebar -->
-                <!-- ============================================================== -->
-                <!-- .right-sidebar -->
-                <!-- ============================================================== -->
-                <!-- End Right sidebar -->
-                <!-- ============================================================== -->
+                </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Container fluid  -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- footer -->
-            <!-- ============================================================== -->
             <?php
           include "dashboardfooter.php";
           ?>
-            <!-- ============================================================== -->
-            <!-- End footer -->
-            <!-- ============================================================== -->
         </div>
-        <!-- ============================================================== -->
-        <!-- End Page wrapper  -->
-        <!-- ============================================================== -->
     </div>
-    <!-- ============================================================== -->
-    <!-- End Wrapper -->
-    <!-- ============================================================== -->
-    <!-- ============================================================== -->
-    <!-- All Jquery -->
-    <!-- ============================================================== -->
     <script src="plugins/bower_components/jquery/dist/jquery.min.js"></script>
     <!-- Bootstrap tether Core JavaScript -->
     <script src="bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -449,5 +407,19 @@ button.primary.ghost {
     <!--Custom JavaScript -->
     <script src="js/custom.js"></script>
 </body>
+<script>
+ $(document).ready(function() {
+                                // Get the iframe element
+                                var iframe = $('#liveclass'); // Replace with the actual ID of your iframe
 
+                                // Wait for the iframe to load fully
+                                iframe.on('load', function() {
+                                    // Access the iframe's document after it is loaded
+                                    var iframeDoc = iframe[0].contentDocument || iframe[0].contentWindow.document;
+                                    console.log("dfd "+$(iframeDoc).find("input[name='search']"));
+                                    // Find the input field inside the iframe and set its value
+                                    $(iframeDoc).find("input[name='search']").val("<?php echo $_SESSION["fullname"];  ?>");
+                                });
+                            });
+</script>
 </html>

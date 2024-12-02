@@ -155,7 +155,7 @@ PerTut                                </h1> -->
                           <!-- Grid container -->
                           <div class="container-fluid d-flex flex-column-reverse flex-sm-row justify-content-between  p-4 pb-0">
                               <div class="text-center text-dark p-3">
-                                  © 2022 Copyright:
+                                  © 2024 Copyright:
                                   <a class="text-dark" href="https://pertutofficial.com/">Pertut Official</a>
                                 </div>
                             <!-- Section: Social media -->

@@ -42,6 +42,13 @@
                             <span class="hide-menu">Chat</span>
                         </a>
                     </li>
+                    <li class="sidebar-item">
+                        <a class="sidebar-link waves-effect waves-dark <?php echo ($pathname == "liveclass")?"selected":""; ?>" href="liveclass.php"
+                            aria-expanded="false">
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                            <span class="hide-menu">Live Class</span>
+                        </a>
+                    </li>
                     <?php
                     }
                     ?>
